@@ -15,9 +15,35 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-"""
-    Class
-"""
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), nullable=False)
+    encrypted_password = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    age = db.Column(db.Integer)
+    height = db.Column(db.Integer)
+    weight = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+    def __init__(self, username, encrypted_password, name, age):
+        self.username = username 
+        self.encrypted_password = encrypted_password
+        self.name = name 
+        self.age = age 
+
+    def asdict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'encrypted_password': self.encrypted_password,
+            'name': self.name,
+            'age': self.age,
+            'height': self.height if self.height is not None else '-',
+            'weight': self.weight if self.weight is not None else '-',
+            'created_at': self.created_at
+        }
+
 
 if __name__ == '__main__':
-    manager.run()
+    manager.run()   
