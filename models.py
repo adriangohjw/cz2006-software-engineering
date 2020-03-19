@@ -44,6 +44,22 @@ class User(db.Model):
             'created_at': self.created_at
         }
 
+class Location(db.Model):
+    __tablename__ = 'locations'
+    id = db.Column(db.Integer, primary_key=True)
+    latitude = db.Column(db.Float)
+    longtitude = db.Column(db.Float)
+
+    def __init__(self, latiitude, longtitude):
+        self.latitude = latiitude
+        self.longtitude = longtitude
+    
+    def asdict(self):
+        return {
+            'id': self.id,
+            'latitude': self.latitude,
+            'longtitude': self.longtitude
+        }
 
 if __name__ == '__main__':
     manager.run()   
