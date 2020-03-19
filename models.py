@@ -22,8 +22,8 @@ class User(db.Model):
     encrypted_password = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     age = db.Column(db.Integer)
-    height = db.Column(db.Integer)
-    weight = db.Column(db.Integer)
+    height = db.Column(db.Integer)  # in cm
+    weight = db.Column(db.Integer)  # in cm
     created_at = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, username, encrypted_password, name, age):
@@ -59,6 +59,40 @@ class Location(db.Model):
             'id': self.id,
             'latitude': self.latitude,
             'longtitude': self.longtitude
+        }
+
+class Route(db.Model):
+    __tablename__ = 'routes'
+    id = db.Column(db.Integer, primary_key=True)
+    startingPos = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)
+    endingPos = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)
+    distance = db.Column(db.Integer, nullable=False)
+    purpose = db.Column(db.Boolean, nullable=False)
+    elevationLevel = db.Column(db.String(255), nullable=False)
+    calories = db.Column(db.Integer)
+    time = db.Column(db.Integer)    # in seconds
+    ascent = db.Column(db.Integer)
+    descent = db.Column(db.Integer)
+
+    def __init__(self, startingPos, endingPos, distance, purpose, elevationLevel):
+        self.startingPos = startingPos
+        self.endingPos = endingPos
+        self.distance = distance
+        self.purpose = purpose
+        self.elevationLevel = elevationLevel
+
+    def asdict(self):
+        return {
+            'id': self.id,
+            'startingPos': self.startingPos,
+            'endingPos': self.endingPos,
+            'distance': self.distance,
+            'purpose': self.purpose,
+            'elevationLevel': self.elevationLevel, 
+            'calories': self.calories,
+            'time': self.time,
+            'ascent': self.ascent,
+            'descent': self.descent
         }
 
 if __name__ == '__main__':
