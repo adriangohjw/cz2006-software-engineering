@@ -1,19 +1,7 @@
-from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from config import Config
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
-from sqlalchemy.ext.hybrid import hybrid_property
 
-from run import create_app
-app = create_app()
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
+db = SQLAlchemy()
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -26,11 +14,10 @@ class User(db.Model):
     weight = db.Column(db.Integer)  # in cm
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-    def __init__(self, username, encrypted_password, name, age):
+    def __init__(self, username, encrypted_password, name):
         self.username = username 
         self.encrypted_password = encrypted_password
         self.name = name 
-        self.age = age 
 
     def asdict(self):
         return {
@@ -44,11 +31,13 @@ class User(db.Model):
             'created_at': self.created_at
         }
 
-class Location(db.Model):
-    __tablename__ = 'locations'
+class Point(db.Model):
+    __tablename__ = 'points'
+    route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), primary_key=True)
     id = db.Column(db.Integer, primary_key=True)
-    latitude = db.Column(db.Float)
-    longtitude = db.Column(db.Float)
+    latitude = db.Column(db.Float, nullable=False)
+    longtitude = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, latiitude, longtitude):
         self.latitude = latiitude
@@ -56,44 +45,40 @@ class Location(db.Model):
     
     def asdict(self):
         return {
+            'route': self.route,
             'id': self.id,
             'latitude': self.latitude,
-            'longtitude': self.longtitude
+            'longtitude': self.longtitude,
+            'created_at': self.created_at
         }
 
 class Route(db.Model):
     __tablename__ = 'routes'
     id = db.Column(db.Integer, primary_key=True)
-    startingPos = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)
-    endingPos = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)
-    distance = db.Column(db.Integer, nullable=False)
+    distance = db.Column(db.Integer, nullable=False)    # in metre
     purpose = db.Column(db.Boolean, nullable=False)
     elevationLevel = db.Column(db.String(255), nullable=False)
     calories = db.Column(db.Integer)
-    time = db.Column(db.Integer)    # in seconds
-    ascent = db.Column(db.Integer)
-    descent = db.Column(db.Integer)
+    ascent = db.Column(db.Integer, nullable=False)
+    descent = db.Column(db.Integer, nullable=False)
+    points = db.relationship('Point', backref='route')
 
-    def __init__(self, startingPos, endingPos, distance, purpose, elevationLevel):
-        self.startingPos = startingPos
-        self.endingPos = endingPos
+    def __init__(self, distance, purpose, elevationLevel, ascent, descent):
         self.distance = distance
         self.purpose = purpose
-        self.elevationLevel = elevationLevel
+        self.elevationLevel = elevationLevel,
+        self.ascent = ascent,
+        self.descent = descent
 
     def asdict(self):
         return {
             'id': self.id,
-            'startingPos': self.startingPos,
-            'endingPos': self.endingPos,
             'distance': self.distance,
             'purpose': self.purpose,
             'elevationLevel': self.elevationLevel, 
             'calories': self.calories,
-            'time': self.time,
             'ascent': self.ascent,
-            'descent': self.descent
+            'descent': self.descent,
+            'count_points': len(self.points),
+            'points': [p.asdict() for p in self.points]
         }
-
-if __name__ == '__main__':
-    manager.run()   
