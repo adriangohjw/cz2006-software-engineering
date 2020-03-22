@@ -9,9 +9,14 @@ def create_app():
     return app
 
 if __name__ == "__main__":
+
     app = create_app()
 
     from models import db 
     db.init_app(app)
 
+    from blueprints import user_bp
+    app.register_blueprint(user_bp, url_prefix='/users')
+
     app.run(port=5000, debug=True)
+    
