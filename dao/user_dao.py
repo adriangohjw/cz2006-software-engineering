@@ -9,8 +9,13 @@ def userCreate(user):
         print(e)
         return False
 
-def userRead(id):
-    return User.query.filter_by(id=id).first()
+def userRead(col, value):
+
+    if col == 'id':
+        return User.query.filter_by(id=value).first()
+    elif col == 'username':
+        return User.query.filter_by(username=value).first()
+        
 
 def userUpdate():
     try:
