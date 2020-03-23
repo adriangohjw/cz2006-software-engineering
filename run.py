@@ -15,8 +15,9 @@ if __name__ == "__main__":
     from models import db 
     db.init_app(app)
 
-    from blueprints import user_bp
+    from blueprints import user_bp, route_bp
     app.register_blueprint(user_bp, url_prefix='/users')
+    app.register_blueprint(route_bp, url_prefix='/routes')
 
     app.run(port=5000, debug=True)
     
