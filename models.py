@@ -39,7 +39,8 @@ class Point(db.Model):
     longtitude = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-    def __init__(self, latiitude, longtitude):
+    def __init__(self, route_id, latiitude, longtitude):
+        self.route_id = route_id
         self.latitude = latiitude
         self.longtitude = longtitude
     
