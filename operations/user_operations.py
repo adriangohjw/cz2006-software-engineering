@@ -20,9 +20,9 @@ def initialize_user(username, plaintext_password, name):
     return User(username, encrypted_password, name)
 
 
-def user_read_operation(id):
+def user_read_operation(col, value):
 
-    user = userRead(id)
+    user = userRead(col, value)
 
     # user is not found
     if user is None:
@@ -33,6 +33,8 @@ def user_read_operation(id):
 
 
 def user_create_operation(username, plaintext_password, name):
+
+    user = userRead(col='username', value=username)
 
     # user existing
     if user is not None:
@@ -48,7 +50,7 @@ def user_create_operation(username, plaintext_password, name):
 
 def user_update_operation(id, col, value):
 
-    user = userRead(id)
+    user = userRead(col='id', value=id)
 
     # user is not found
     if user is None:
@@ -72,8 +74,8 @@ def user_update_operation(id, col, value):
 
 # passwords are in plaintext
 def user_update_operation_operation(id, current_password, new_password):
-    
-    user = userRead(id)
+
+    user = userRead(col='id', value=id)
 
     # user is not found
     if user is None:
