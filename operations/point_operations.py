@@ -1,12 +1,18 @@
 from models import Point
 
-from dao.point_dao import pointCreate, pointRead
+from dao.point_dao import pointCreate, pointRead, get_last_id
 
 from exceptions import ErrorWithCode
 
 
-def initialize_point(route_id, latiitude, longtitude):
-    return Point(route_id, latiitude, longtitude)
+def initialize_point(route_id, latitude, longtitude):
+    last_point_id = get_last_id(route_id)
+    return Point(
+        route_id=route_id, 
+        id=last_point_id + 1,
+        latitude=latitude, 
+        longtitude=longtitude
+    )
 
 
 def point_read_operation(route_id, point_id):
