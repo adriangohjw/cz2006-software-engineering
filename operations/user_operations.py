@@ -6,17 +6,22 @@ from dao.user_dao import userCreate, userRead, userUpdate
 
 from exceptions import ErrorWithCode
 
+
 def encrypt(plaintext_password):
     return bcrypt.hashpw(bytes(plaintext_password, "utf8"), bcrypt.gensalt()).decode("utf-8")
 
+
 def authenticate(plaintext_password, encrypted_password):
     return bcrypt.checkpw(bytes(plaintext_password, "utf-8"), bytes(encrypted_password, "utf-8"))
+
 
 def initialize_user(username, plaintext_password, name):
     encrypted_password = encrypt(plaintext_password)
     return User(username, encrypted_password, name)
 
+
 def user_read_operation(id):
+
     user = userRead(id)
 
     # user is not found
@@ -26,8 +31,8 @@ def user_read_operation(id):
     # success case
     return user
 
+
 def user_create_operation(username, plaintext_password, name):
-    user = userRead(id)
 
     # user existing
     if user is not None:
@@ -40,7 +45,9 @@ def user_create_operation(username, plaintext_password, name):
     # success case
     return user
     
+
 def user_update_operation(id, col, value):
+
     user = userRead(id)
 
     # user is not found
@@ -62,8 +69,10 @@ def user_update_operation(id, col, value):
     # success case
     return user
 
+
 # passwords are in plaintext
 def user_update_operation_operation(id, current_password, new_password):
+    
     user = userRead(id)
 
     # user is not found
