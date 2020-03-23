@@ -7,9 +7,9 @@ from controllers import \
 user_bp = Blueprint('user', __name__)
 api_user = Api(user_bp)
 api_user.add_resource(user_controllers.userAPI, '/')
-api_user.add_resource(user_controllers.userPasswordAPI, '/password')
+api_user.add_resource(user_controllers.userPasswordAPI, '/password/')
 
 route_bp = Blueprint('route', __name__)
 api_route = Api(route_bp)
 api_route.add_resource(route_controllers.routeAPI, '/')
-api_route.add_resource(point_controllers.pointAPI, '/points')
+api_route.add_resource(point_controllers.pointAPI, '/points/')

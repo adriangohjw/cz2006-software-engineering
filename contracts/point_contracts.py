@@ -14,7 +14,7 @@ def validate_id(id):
         raise Exception("id is empty")
 
     # if not integer
-    if not isinstance(id, int):
+    if not isinstance(int(id), int):
         raise Exception("id is not integer")
 
 
@@ -29,7 +29,7 @@ def validate_latitude(latitude):
         raise Exception("latitude is empty")
 
     # if not float
-    if not isinstance(latitude, float):
+    if not isinstance(float(latitude), float):
         raise Exception("latitude is not float")
 
 
@@ -44,8 +44,8 @@ def validate_longtitude(longtitude):
         raise Exception("longtitude is empty")
 
     # if not float
-    if not isinstance(longtitude, float):
-        raise Exception("latitude is not float")
+    if not isinstance(float(longtitude), float):
+        raise Exception("longtitude is not float")
 
 
 def point_read_contract(request):    

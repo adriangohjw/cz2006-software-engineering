@@ -1,5 +1,7 @@
 from flask import request
 
+from contracts.user_contracts import validate_id as validate_user_id
+
 
 def validate_id(id):
 
@@ -12,7 +14,7 @@ def validate_id(id):
         raise Exception("id is empty")
 
     # if not integer
-    if not isinstance(id, int):
+    if not isinstance(int(id), int):
         raise Exception("id is not integer")
 
 
@@ -27,7 +29,7 @@ def validate_distance(distance):
         raise Exception("distance is empty")
 
     # if not integer
-    if not isinstance(distance, int):
+    if not isinstance(int(distance), int):
         raise Exception("distance is not integer")
 
 
@@ -64,7 +66,7 @@ def validate_calories(calories):
         raise Exception("calories is empty")
 
     # if not integer
-    if not isinstance(calories, int):
+    if not isinstance(int(calories), int):
         raise Exception("calories is not integer")
 
 
@@ -79,7 +81,7 @@ def validate_ascent(ascent):
         raise Exception("ascent is empty")
 
     # if not integer
-    if not isinstance(ascent, int):
+    if not isinstance(int(ascent), int):
         raise Exception("ascent is not integer")
 
 
@@ -94,7 +96,7 @@ def validate_descent(descent):
         raise Exception("descent is empty")
 
     # if not integer
-    if not isinstance(descent, int):
+    if not isinstance(int(descent), int):
         raise Exception("descent is not integer")
 
 
@@ -111,12 +113,14 @@ def route_read_contract(request):
 
 def route_create_contract(request):
 
+    user_id = request.args.get('user_id')
     distance = request.args.get('distance')
     purpose = request.args.get('purpose')
     elevationLevel = request.args.get('elevationLevel')
     ascent = request.args.get('ascent')
     descent = request.args.get('descent')
 
+    validate_user_id(user_id)
     validate_distance(distance)
     validate_purpose(purpose)
     validate_elevationLevel(elevationLevel)
@@ -124,6 +128,7 @@ def route_create_contract(request):
     validate_descent(descent)
 
     return {
+        'user_id': user_id,
         'distance': distance,
         'purpose': purpose,
         'elevationLevel': elevationLevel,

@@ -13,6 +13,7 @@ class User(db.Model):
     height = db.Column(db.Integer)  # in cm
     weight = db.Column(db.Integer)  # in cm
     created_at = db.Column(db.DateTime, default=datetime.now)
+    routes = db.relationship('Route', backref='user')
 
     def __init__(self, username, encrypted_password, name):
         self.username = username 
@@ -34,19 +35,20 @@ class User(db.Model):
 class Point(db.Model):
     __tablename__ = 'points'
     route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), primary_key=True)
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longtitude = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-    def __init__(self, route_id, latiitude, longtitude):
+    def __init__(self, route_id, id, latitude, longtitude):
         self.route_id = route_id
-        self.latitude = latiitude
+        self.id = id
+        self.latitude = latitude
         self.longtitude = longtitude
     
     def asdict(self):
         return {
-            'route': self.route,
+            'route': self.route.id,
             'id': self.id,
             'latitude': self.latitude,
             'longtitude': self.longtitude,
@@ -56,15 +58,17 @@ class Point(db.Model):
 class Route(db.Model):
     __tablename__ = 'routes'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     distance = db.Column(db.Integer, nullable=False)    # in metre
-    purpose = db.Column(db.Boolean, nullable=False)
+    purpose = db.Column(db.String(255), nullable=False)
     elevationLevel = db.Column(db.String(255), nullable=False)
     calories = db.Column(db.Integer)
     ascent = db.Column(db.Integer, nullable=False)
     descent = db.Column(db.Integer, nullable=False)
     points = db.relationship('Point', backref='route')
 
-    def __init__(self, distance, purpose, elevationLevel, ascent, descent):
+    def __init__(self, user_id, distance, purpose, elevationLevel, ascent, descent):
+        self.user_id = user_id
         self.distance = distance
         self.purpose = purpose
         self.elevationLevel = elevationLevel,
@@ -74,6 +78,11 @@ class Route(db.Model):
     def asdict(self):
         return {
             'id': self.id,
+            'user': {
+                'id': self.user.id,
+                'name': self.user.name,
+                'username': self.user.username
+            },
             'distance': self.distance,
             'purpose': self.purpose,
             'elevationLevel': self.elevationLevel, 

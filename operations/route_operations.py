@@ -1,12 +1,13 @@
 from models import Route
 
 from dao.route_dao import routeCreate, routeRead, routeUpdate, routeDelete
+from dao.user_dao import userRead
 
 from exceptions import ErrorWithCode
 
 
-def initialize_route(distance, purpose, elevationLevel, ascent, descent):
-    return Route(distance, purpose, elevationLevel, ascent, descent)
+def initialize_route(user_id, distance, purpose, elevationLevel, ascent, descent):
+    return Route(user_id, distance, purpose, elevationLevel, ascent, descent)
 
 
 def route_read_operation(id):
@@ -21,9 +22,14 @@ def route_read_operation(id):
     return route
 
 
-def route_create_operation(distance, purpose, elevationLevel, ascent, descent):
+def route_create_operation(user_id, distance, purpose, elevationLevel, ascent, descent):
 
-    route = initialize_route(distance, purpose, elevationLevel, ascent, descent)
+    user = userRead(col='id', value=user_id)
+
+    if user is None:
+        raise ErrorWithCode(404, "No user found")
+
+    route = initialize_route(user_id, distance, purpose, elevationLevel, ascent, descent)
     if routeCreate(route) == False:
         raise ErrorWithCode(400, "Unsuccessful")
 

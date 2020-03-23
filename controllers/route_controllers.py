@@ -17,7 +17,7 @@ class routeAPI(Resource):
         
         # contracts
         try:
-            r = route_create_contract(request)
+            r = route_read_contract(request)
         except Exception as e:
             return make_response(
                 jsonify (
@@ -56,7 +56,7 @@ class routeAPI(Resource):
         # operations
         try:
             route = route_create_operation(
-                r['distance'], r['purpose'], r['elevationLevel'], r['ascent'], r['descent']
+                r['user_id'], r['distance'], r['purpose'], r['elevationLevel'], r['ascent'], r['descent']
             )
         except ErrorWithCode as e:
             return make_response(

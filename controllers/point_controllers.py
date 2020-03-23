@@ -28,7 +28,7 @@ class pointAPI(Resource):
         # operations
         try:
             point = point_read_operation(
-                p['route_id'], p['point_id']
+                p['route_id'], p['id']
             )
         except ErrorWithCode as e:
             return make_response(
