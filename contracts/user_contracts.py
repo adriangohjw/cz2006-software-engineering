@@ -12,7 +12,7 @@ def validate_id(id):
         raise Exception("id is empty")
 
     # if not integer
-    if not isinstance(id, int):
+    if not isinstance(int(id), int):
         raise Exception("id is not integer")
 
 
@@ -60,7 +60,7 @@ def validate_age(age):
         raise Exception("age is empty")
 
     # if not integer
-    if not isinstance(age, int):
+    if not isinstance(int(age), int):
         raise Exception("age is not integer")
 
 
@@ -75,7 +75,7 @@ def validate_height(height):
         raise Exception("height is empty")
 
     # if not integer
-    if not isinstance(height, int):
+    if not isinstance(int(height), int):
         raise Exception("height is not integer")
 
 
@@ -90,7 +90,7 @@ def validate_weight(weight):
         raise Exception("weight is empty")
 
     # if not integer
-    if not isinstance(weight, int):
+    if not isinstance(int(weight), int):
         raise Exception("weight is not integer")
 
 
