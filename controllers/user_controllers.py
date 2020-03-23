@@ -17,7 +17,7 @@ class userAPI(Resource):
         
         # contracts
         try:
-            u = user_create_contract(request)
+            u = user_read_contract(request)
         except Exception as e:
             return make_response(
                 jsonify (
@@ -27,7 +27,9 @@ class userAPI(Resource):
 
         # operations
         try:
-            user = user_read_operation(u['id'])
+            user = user_read_operation(
+                col='id', value=u['id']
+            )
         except ErrorWithCode as e:
             return make_response(
                 jsonify (
