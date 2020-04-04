@@ -1,0 +1,42 @@
+# Metadata for Cycling Path Network
+---
+Identifier: '61d1075e-16e5-4a2b-a803-d2f9b378c82f'
+Name: 'cycling-path-network'
+Title: 'Cycling Path Network'
+Description: 'A symbolic line representation of the cycling paths from LTA & Town
+  Council.'
+Topics:
+  - 'Transport'
+Keywords:
+  - 'Cycling'
+  - 'Cycling Network'
+  - 'Cycling Path'
+  - 'LTA'
+  - 'LTA Cycling'
+  - 'LTA Cycling Path Network'
+  - 'LTA Network'
+  - 'OneMap'
+Publisher:
+  Name: 'Land Transport Authority'
+  Admin 1:
+    Name: 'Chan Bee Ling'
+    Department: 'LAND TRANSPORT AUTHORITY'
+    Email: 'CHAN_Bee_Ling@lta.gov.sg'
+Sources:
+  - 'Land Transport Authority'
+License: 'https://data.gov.sg/open-data-licence'
+Frequency: 'Half-yearly'
+Last Updated: '2020-01-16T00:02:03.292064'
+Resources:
+  -
+    Identifier: 'c5889148-f0d2-4620-b22f-d6ba00655a97'
+    Title: 'Cycling Path Network (KML)'
+    Url: 'https://geo.data.gov.sg/cyclingpath/2020/01/13/kml/cyclingpath.kml'
+    Format: 'KML'
+    Last Updated: '2020-01-12T16:00:00'
+  -
+    Identifier: '68de4797-b72b-4cf3-81e6-cc3b4e13b03b'
+    Title: 'Cycling Path Network (GEOJSON)'
+    Url: 'https://geo.data.gov.sg/cyclingpath/2020/01/13/geojson/cyclingpath.geojson'
+    Format: 'GeoJSON'
+    Last Updated: '2020-01-12T16:00:00'
