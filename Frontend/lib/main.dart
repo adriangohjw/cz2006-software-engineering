@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'Search.dart';
-import 'User.dart';
+import 'profile.dart';
 import 'Routez.dart';
+import 'PopularMaps.dart';
 
 
 void main() => runApp(MyApp());
@@ -47,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
       body: DefaultTabController(
-        length: 2,
+        length: 3,
         child: new Scaffold(
           body: 
          /*
@@ -61,10 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
         );
             },)
           */
-          TabBarView(children: [Search(), User()]),
+          TabBarView(children: [Search(), ProfilePage(), PopMap()]),
         bottomNavigationBar: new TabBar(tabs: <Widget>[
           Tab(icon: Icon(Icons.directions_bike)),
-          Tab(icon: Icon(Icons.person_outline))
+          Tab(icon: Icon(Icons.person_outline)),
+          Tab(icon: Icon(Icons.star))
         ],
             labelColor: Colors.blue,
             unselectedLabelColor: Colors.black,

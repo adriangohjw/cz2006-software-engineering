@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login_page/profile.dart';
+import 'profile.dart';
 import 'Widgets/buttonNewUser.dart';
 import 'Widgets/newEmail.dart';
 import 'Widgets/newName.dart';

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'liveNav.dart';
+import 'package:location/location.dart';
 
 class Routez extends StatefulWidget {
   @override
@@ -16,6 +17,10 @@ const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
 const LatLng SOURCE_LOCATION = LatLng(1.355435, 103.685172);
 const LatLng DEST_LOCATION = LatLng(1.341454, 103.684035);
+double centerlat = (SOURCE_LOCATION.latitude+DEST_LOCATION.latitude)/2;
+double centerlong =(SOURCE_LOCATION.longitude+DEST_LOCATION.longitude)/2;
+double centerlongg = centerlong - 1;
+LatLng centerLoc = new LatLng(centerlat, centerlong);
 
 
 class _MapPageState extends State<Routez> {
@@ -30,6 +35,9 @@ class _MapPageState extends State<Routez> {
 
     @override
     Widget build(BuildContext context) {
+      print(centerLoc);
+      print(centerlat);
+      print(centerlongg);
       return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
@@ -45,7 +53,7 @@ class _MapPageState extends State<Routez> {
                                       zoom: CAMERA_ZOOM,
                                       bearing: CAMERA_BEARING,
                                       tilt: CAMERA_TILT,
-                                      target: SOURCE_LOCATION),
+                                      target: DEST_LOCATION,),
 
             onMapCreated: onMapCreated),
 
@@ -74,7 +82,7 @@ class _MapPageState extends State<Routez> {
                 FloatingActionButton(
                   heroTag: null,
                   child: Icon(Icons.my_location),
-                  onPressed: () {},
+                  onPressed: () {_currentLocation();},
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.blue,
                 ), 
@@ -185,6 +193,24 @@ class _MapPageState extends State<Routez> {
           // end up showing up on the map
           _polylines.add(polyline);
       });
+  }
+  void _currentLocation() async {
+   final GoogleMapController controller = await _controller.future;
+   LocationData currentLocation;
+   var location = new Location();
+   try {
+     currentLocation = await location.getLocation();
+     } on Exception {
+       currentLocation = null;
+       }
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        bearing: 0,
+        target: LatLng(currentLocation.latitude, currentLocation.longitude),
+        zoom: 17.0,
+      ),
+    ));
   }
 }
 /*

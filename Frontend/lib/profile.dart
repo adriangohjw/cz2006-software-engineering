@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'edituser.dart';
+import 'netStatistics.dart';
+import 'savedMaps.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -9,21 +11,27 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+      
+        title: Text(
+          'Profile',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+      ),
+      
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.only(top: 10),
             child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-          Center(
-              child: Container(
-            padding: EdgeInsets.fromLTRB(20, 60, 20, 5),
-            child: Text("Profile",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Poppins",
-                    fontSize: 30,
-                    letterSpacing: 1.0)),
-          )),
           new Align(
               alignment: Alignment.topLeft,
               child: Container(
@@ -152,7 +160,9 @@ class _ProfilePageState extends State<ProfilePage> {
             children: <Widget>[
               RaisedButton(
                 // Statistics
-                onPressed: () {},
+                onPressed: () {Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => NetStats()),
+                    );},
                 color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -167,13 +177,17 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               RaisedButton(
                 // Saved Rides
-                onPressed: () {},
+                onPressed: () {Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => SavedMap()),
+                    );},
                 color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
                     'Saved Rides',
                     style: TextStyle(fontSize: 25, color: Colors.black),
+                    
+                    
                   ),
                 ),
                 elevation: 5,
@@ -272,6 +286,6 @@ class _ProfilePageState extends State<ProfilePage> {
             color: Colors.grey,
             margin: const EdgeInsets.only(bottom: 20.0, top: 20.0),
           ),
-        ])));
+        ]))));
   }
 }

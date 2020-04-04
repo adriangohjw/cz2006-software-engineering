@@ -11,9 +11,9 @@ void main() {
 const double CAMERA_ZOOM = 15;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
-const LatLng SOURCE_LOCATION = LatLng(1.355435, 103.685172);
-const LatLng DEST_LOCATION = LatLng(1.341454, 103.684035);
-enum ElevationLevel { Uphill, Downhill, Balanced, Flat }
+//const LatLng SOURCE_LOCATION = LatLng(1.355435, 103.685172);
+//const LatLng DEST_LOCATION = LatLng(1.341454, 103.684035);
+//enum ElevationLevel { Uphill, Downhill, Balanced, Flat }
 
 class MyApp extends StatelessWidget {
   @override
@@ -40,17 +40,19 @@ class RecommenderState extends State<MyHomePage> {
   BitmapDescriptor destinationIcon;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _fitnessSliderInitVal = 5;
-  ElevationLevel _elevationLevel = ElevationLevel.Balanced;
   double maxDist;
-  double maxTime;
   double minCal;
   TextEditingController _textcontrollerdist = new TextEditingController();
-  TextEditingController _textcontrollertime = new TextEditingController();
   TextEditingController _textcontrollercalo = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final routeDist = ['20KM', '30KM', '40KM', '50KM'];
+    
+
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -58,7 +60,8 @@ class RecommenderState extends State<MyHomePage> {
           'Recommended Routes',
           style: TextStyle(
             color: Colors.black,
-          ),),
+          ),
+        ),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -118,22 +121,6 @@ class RecommenderState extends State<MyHomePage> {
               child: TextField(
                 //obscureText: true,
                 controller:
-                    _textcontrollertime, // This value should be taken from the database, and used as initial value
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Max Travel Time (Mins)',
-                ),
-                onSubmitted: (String value) {
-                  maxTime = double.parse(value);
-                  _textcontrollertime.text = value;
-                },
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: TextField(
-                //obscureText: true,
-                controller:
                     _textcontrollercalo, // This value should be taken from the database, and used as initial value
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -168,8 +155,8 @@ class RecommenderState extends State<MyHomePage> {
                           value: _fitnessSliderInitVal
                               .toDouble(), // This value should be taken from the database, and used as initial value
                           min: 1,
-                          max: 10,
-                          divisions: 10,
+                          max: 5,
+                          divisions: 4,
                           onChanged: (double newValue) {
                             setState(() {
                               _fitnessSliderInitVal = newValue
@@ -205,74 +192,6 @@ class RecommenderState extends State<MyHomePage> {
               ),
             ),
             Container(
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all()),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.all(20),
-                    child: Text(
-                      "Elevation Level",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('Uphill'),
-                    leading: Radio(
-                      value: ElevationLevel.Uphill,
-                      groupValue: _elevationLevel,
-                      onChanged: (ElevationLevel value) {
-                        setState(() {
-                          _elevationLevel = value;
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('Downhill'),
-                    leading: Radio(
-                      value: ElevationLevel.Downhill,
-                      groupValue: _elevationLevel,
-                      onChanged: (ElevationLevel value) {
-                        setState(() {
-                          _elevationLevel = value;
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('Balanced'),
-                    leading: Radio(
-                      value: ElevationLevel.Balanced,
-                      groupValue: _elevationLevel,
-                      onChanged: (ElevationLevel value) {
-                        setState(() {
-                          _elevationLevel = value;
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('Flat'),
-                    leading: Radio(
-                      value: ElevationLevel.Flat,
-                      groupValue: _elevationLevel,
-                      onChanged: (ElevationLevel value) {
-                        setState(() {
-                          _elevationLevel = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
               height: 100,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -297,13 +216,10 @@ class RecommenderState extends State<MyHomePage> {
                       onPressed: () {
                         _textcontrollercalo.value = TextEditingValue.empty;
                         _textcontrollerdist.value = TextEditingValue.empty;
-                        _textcontrollertime.value = TextEditingValue.empty;
-                        
+
                         setState(() {
-                          _elevationLevel = ElevationLevel.Balanced;
                           _fitnessSliderInitVal = 5;
-                        }
-                        );
+                        });
                         Navigator.pop(context);
                       },
                     ),
@@ -314,178 +230,267 @@ class RecommenderState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Center(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Card(
-                semanticContainer: true,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                elevation: 10,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
-                  splashColor: Colors.blue.withAlpha(30),
-                  onTap: () {
-                    Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>
-              Routez()),
-        );
-                  },
-                  child: Container(
-                    width: 500,
-                    height: 200,
-                    child: Stack(
-                      children: <Widget>[
-                        // GoogleMap(
-                        //     myLocationEnabled: true,
-                        //     myLocationButtonEnabled: false,
-                        //     compassEnabled: false,
-                        //     tiltGesturesEnabled: false,
-                        //     markers: _markers,
-                        //     polylines: _polylines,
-                        //     mapType: MapType.normal,
-                        //     initialCameraPosition: CameraPosition(
-                        //         zoom: CAMERA_ZOOM,
-                        //         bearing: CAMERA_BEARING,
-                        //         tilt: CAMERA_TILT,
-                        //         target: SOURCE_LOCATION),
-                        //     onMapCreated: onMapCreated),
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              width: 500,
-                              height: 150,
-                              padding: EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(20),
-                                    topLeft: Radius.circular(20)),
-                                color: Colors.blue,
-                              ),
-
-                              child: GoogleMap(
-                                  myLocationEnabled: true,
-                                  myLocationButtonEnabled: false,
-                                  compassEnabled: false,
-                                  tiltGesturesEnabled: false,
-                                  markers: _markers,
-                                  polylines: _polylines,
-                                  mapType: MapType.normal,
-                                  initialCameraPosition: CameraPosition(
-                                      zoom: CAMERA_ZOOM,
-                                      bearing: CAMERA_BEARING,
-                                      tilt: CAMERA_TILT,
-                                      target: SOURCE_LOCATION),
-                                  onMapCreated: onMapCreated),
-                              //color: Colors.green,
-
-                              //alignment: Alignment.topCenter,
-                            ),
-                            Container(
-                              width: 500,
-                              height: 50,
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "30KM", // this is a random value. original value must be extracted from database / route detail and replaced here
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          right: BorderSide(
-                                              color: Colors.black38, width: 1),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "120 Mins", // this is a random value. original value must be extracted from database / route detail and replaced here
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          right: BorderSide(
-                                              color: Colors.black38, width: 1),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "300 KCal", // this is a random value. original value must be extracted from database / route detail and replaced here
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: <Widget>[
+                    for (var i = 0; i < routeDist.length; i++)
+                      _mapfunc(context, i)
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   void onMapCreated(GoogleMapController controller) {
     //controller.setMapStyle(Utils.mapStyles);
-    _controller.complete(controller);
-    setMapPins();
-    setPolylines();
   }
 
-  void setMapPins() {
+  Widget _mapfunc(BuildContext context, int index) {
+    final routeDist = ['20KM', '30KM', '40KM', '50KM'];
+    final routeTime = ['200 Mins', '250 Mins', '300 Mins', '350 Mins'];
+    final routeCal = ['1000KCal', '2000KCal', '3000KCal', '4000KCal'];
+    final routeAsc = ['10Km', '20Km', '30Km', '40Km'];
+    final routeDesc = ['1Km', '2Km', '3Km', '4Km'];
+    final routeFlat = ['100Km', '200Km', '300Km', '400Km'];
+    final startLocs = [
+      LatLng(1.355435, 103.685172),
+      LatLng(1.344454, 103.686035),
+      LatLng(1.347454, 103.687035),
+      LatLng(1.350454, 103.688035)
+    ];
+    final endLocs = [
+      LatLng(1.341454, 103.684035),
+      LatLng(1.350454, 103.688035),
+      LatLng(1.344454, 103.686035),
+      LatLng(1.347454, 103.687035)
+    ];
+
+    return Card(
+      semanticContainer: true,
+      margin: EdgeInsets.only(bottom: 30),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      elevation: 10,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        splashColor: Colors.blue.withAlpha(30),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => Routez()),
+          );
+        },
+        child: Container(
+          width: 500,
+          height: 250,
+          child: Stack(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Container(
+                    width: 500,
+                    height: 150,
+                    padding: EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20)),
+                      color: Colors.blue,
+                    ),
+
+                    child: GoogleMap(
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: false,
+                      scrollGesturesEnabled: false,
+                      rotateGesturesEnabled: false,
+                      compassEnabled: false,
+                      tiltGesturesEnabled: false,
+                      markers: _markers,
+                      polylines: _polylines,
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                          zoom: CAMERA_ZOOM,
+                          bearing: CAMERA_BEARING,
+                          tilt: CAMERA_TILT,
+                          target: SOURCE_LOCATION),
+                      onMapCreated: (GoogleMapController controller) {
+                        _controller.complete(controller);
+                        setMapPins(startLocs[index], endLocs[index]);
+                        setPolylines(startLocs[index], endLocs[index]);
+                      },
+
+                      //options:
+                    ),
+
+                    //color: Colors.green,
+
+                    //alignment: Alignment.topCenter,
+                  ),
+                  Container(
+                    width: 500,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.black38, width: 1),
+                      ),
+                    ),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              routeDist[
+                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                right:
+                                    BorderSide(color: Colors.black38, width: 1),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              routeTime[
+                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                right:
+                                    BorderSide(color: Colors.black38, width: 1),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              routeCal[
+                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 500,
+                    height: 50,
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              routeAsc[
+                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                right:
+                                    BorderSide(color: Colors.black38, width: 1),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              routeDesc[
+                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                right:
+                                    BorderSide(color: Colors.black38, width: 1),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              routeFlat[
+                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void setMapPins(LatLng source, LatLng dest) {
     setState(() {
       // source pin
       _markers.add(Marker(
-          markerId: MarkerId('sourcePin'),
-          position: SOURCE_LOCATION,
-          icon: sourceIcon));
+          markerId: MarkerId('sourcePin'), position: source, icon: sourceIcon));
       // destination pin
       _markers.add(Marker(
           markerId: MarkerId('destPin'),
-          position: DEST_LOCATION,
+          position: dest,
           icon: destinationIcon));
     });
   }
 
-  setPolylines() async {
+  setPolylines(LatLng source, LatLng dest) async {
     List<PointLatLng> result = await polylinePoints?.getRouteBetweenCoordinates(
         googleAPIKey,
-        SOURCE_LOCATION.latitude,
-        SOURCE_LOCATION.longitude,
-        DEST_LOCATION.latitude,
-        DEST_LOCATION.longitude);
+        source.latitude,
+        source.longitude,
+        dest.latitude,
+        dest.longitude);
     print(result);
     if (result.isNotEmpty) {
       // loop through all PointLatLng points and convert them

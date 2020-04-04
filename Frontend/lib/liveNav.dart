@@ -370,7 +370,7 @@ class MapPageState extends State<LiveNav> {
                     FloatingActionButton(
                       heroTag: null,
                       child: Icon(Icons.my_location),
-                      onPressed: () {},
+                      onPressed: () {_currentLocation();},
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.blue,
                     ),
@@ -398,7 +398,7 @@ class MapPageState extends State<LiveNav> {
                     FloatingActionButton(
                       heroTag: null,
                       child: Icon(Icons.stop),
-                      onPressed: () {},
+                      onPressed: _showTravelSummary,
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                     ),
@@ -415,6 +415,71 @@ class MapPageState extends State<LiveNav> {
         ),
       ),
     );
+  }
+
+  void _showTravelSummary(){
+    
+    showDialog<Null>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return new AlertDialog(
+        title: new Text('Toute is complete!'),
+        content: new SingleChildScrollView(
+          child: new ListBody(
+            children: <Widget>[
+              Row(
+              children: <Widget>[
+                new Text('Distance covered: '),
+                new Text('30 Km')
+                ],
+              ),
+              Row(
+              children: <Widget>[
+                new Text('Total Time Travelled: '),
+                new Text('120 Min')
+                ],
+              ),
+              Row(
+              children: <Widget>[
+                new Text('Total Calories Burnt: '),
+                new Text('30 Km')
+                ],
+              ),
+              Row(
+              children: <Widget>[
+                new Text('Total Ascent: '),
+                new Text('15 Km')
+                ],
+              ),
+              Row(
+              children: <Widget>[
+                new Text('Total Descent: '),
+                new Text('10 Km')
+                ],
+              ),
+              Row(
+              children: <Widget>[
+                new Text('Total Flat Pathway: '),
+                new Text('5 Km')
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          new FlatButton(
+            child: new Text('Complete Journey'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+
   }
 
   void showPinsOnMap() {
@@ -474,6 +539,24 @@ class MapPageState extends State<LiveNav> {
       });
     }
     print("Polylines: $_polylines");
+  }
+  void _currentLocation() async {
+   final GoogleMapController controller = await _controller.future;
+   LocationData currentLocation;
+   var location = new Location();
+   try {
+     currentLocation = await location.getLocation();
+     } on Exception {
+       currentLocation = null;
+       }
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        bearing: 0,
+        target: LatLng(currentLocation.latitude, currentLocation.longitude),
+        zoom: 17.0,
+      ),
+    ));
   }
 
   void updatePinOnMap() async {
