@@ -39,8 +39,6 @@ class Point(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longtitude = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
-    # route_start = db.relationship('Route', backref='startPos', foreign_keys = 'Route.startPos')
-    # route_end = db.relationship('Route', backref='endPos', foreign_keys = 'Route.endPos')
 
     def __init__(self, latitude, longtitude):
         self.latitude = latitude
