@@ -1,6 +1,6 @@
 from flask import request
 
-from contracts.user_contracts import validate_id as validate_user_id
+from contracts.user_contracts import validate_username as validate_user_username
 from contracts.point_contracts import validate_latitude, validate_longtitude
 
 
@@ -114,7 +114,7 @@ def route_read_contract(request):
 
 def route_create_contract(request):
 
-    user_id = request.args.get('user_id')
+    username = request.args.get('username')
     distance = request.args.get('distance')
     purpose = request.args.get('purpose')
     polyline = request.args.get('polyline')
@@ -125,7 +125,7 @@ def route_create_contract(request):
     endPos_latitude = request.args.get('endPos_latitude')
     endPos_longtitude = request.args.get('endPos_longtitude')
 
-    validate_user_id(user_id)
+    validate_user_username(username)
     validate_distance(distance)
     validate_purpose(purpose)
     validate_polyline(polyline)
@@ -137,7 +137,7 @@ def route_create_contract(request):
     validate_longtitude(endPos_longtitude)
 
     return {
-        'user_id': user_id,
+        'username': username,
         'distance': distance,
         'purpose': purpose,
         'polyline': polyline,

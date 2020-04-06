@@ -96,12 +96,12 @@ def validate_weight(weight):
 
 def user_read_contract(request):    
 
-    id = request.args.get('id')
+    username = request.args.get('username')
 
-    validate_id(id)
+    validate_username(username)
 
     return {
-        'id': int(id)
+        'username': username
     }
 
 
@@ -124,25 +124,35 @@ def user_create_contract(request):
 
 def user_update_contract(request):
 
-    id = request.args.get('id')
-    col = request.args.get('col')
-    value = request.args.get('value')
+    username = request.args.get('username')
+    name = request.args.get('name')
+    age = request.args.get('age')
+    height = request.args.get('height')
+    weight = request.args.get('weight')
 
-    validate_id(id)
+    validate_username(username)
 
-    if col == 'name':
-        validate_name(value)
-    elif col == 'age':
-        validate_age(value)
-    elif col == 'height':
-        validate_height(value)
-    elif col == 'weight':
-        validate_weight(value)
+    if (name is None) and (age is None) and (height is None) and (weight is None):
+        raise Exception("no params being passed in")         
+
+    if name is not None:
+        validate_name(name)
+    
+    if age is not None:
+        validate_age(age)
+
+    if height is not None:
+        validate_height(height)
+
+    if weight is not None:
+        validate_weight(weight)
 
     return {
-        'id': int(id),
-        'col': col,
-        'value': value
+        'username': username,
+        'name': name,
+        'age': age,
+        'height': height,
+        'weight': weight,
     }
 
 
@@ -160,4 +170,15 @@ def user_update_password_contract(request):
         'id': int(id),
         'current_password': current_password,
         'new_password': new_password
+    }
+
+
+def user_read_contract_byID(request):    
+
+    id = request.args.get('id')
+
+    validate_id(id)
+
+    return {
+        'id': int(id)
     }
