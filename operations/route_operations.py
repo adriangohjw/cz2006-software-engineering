@@ -32,18 +32,18 @@ def route_read_operation(id):
 
 
 def route_create_operation(
-    user_id, distance, polyline, purpose, ascent, descent,
+    username, distance, polyline, purpose, ascent, descent,
     startPos_latitude, startPos_longtitude,
     endPos_latitude, endPos_longtitude
 ):
 
-    user = userRead(col='id', value=user_id)
+    user = userRead(col='username', value=username)
 
     if user is None:
         raise ErrorWithCode(404, "No user found")
 
     route = initialize_route(
-        user_id, distance, polyline, purpose, ascent, descent,
+        user.id, distance, polyline, purpose, ascent, descent,
         startPos_latitude, startPos_longtitude,
         endPos_latitude, endPos_longtitude
     )

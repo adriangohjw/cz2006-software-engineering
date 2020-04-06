@@ -56,7 +56,7 @@ class routeAPI(Resource):
         # operations
         try:
             route = route_create_operation(
-                r['user_id'], r['distance'], r['polyline'], r['purpose'], r['ascent'], r['descent'],
+                r['username'], r['distance'], r['polyline'], r['purpose'], r['ascent'], r['descent'],
                 r['startPos_latitude'], r['startPos_longtitude'],
                 r['endPos_latitude'], r['endPos_longtitude']
             )
