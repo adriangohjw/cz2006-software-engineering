@@ -56,7 +56,9 @@ class routeAPI(Resource):
         # operations
         try:
             route = route_create_operation(
-                r['user_id'], r['distance'], r['purpose'], r['elevationLevel'], r['ascent'], r['descent']
+                r['user_id'], r['distance'], r['polyline'], r['purpose'], r['ascent'], r['descent'],
+                r['startPos_latitude'], r['startPos_longtitude'],
+                r['endPos_latitude'], r['endPos_longtitude']
             )
         except ErrorWithCode as e:
             return make_response(

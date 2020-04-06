@@ -1,23 +1,20 @@
 from models import Point
 
-from dao.point_dao import pointCreate, pointRead, get_last_id
+from dao.point_dao import pointCreate, pointRead
 
 from exceptions import ErrorWithCode
 
 
-def initialize_point(route_id, latitude, longtitude):
-    last_point_id = get_last_id(route_id)
+def initialize_point(latitude, longtitude):
     return Point(
-        route_id=route_id, 
-        id=last_point_id + 1,
         latitude=latitude, 
         longtitude=longtitude
     )
 
 
-def point_read_operation(route_id, point_id):
+def point_read_operation(point_id):
 
-    point = pointRead(route_id, point_id)
+    point = pointRead(point_id)
 
     # point is not found
     if point is None:
@@ -27,9 +24,9 @@ def point_read_operation(route_id, point_id):
     return point
 
 
-def point_create_operation(route_id, latiitude, longtitude):
+def point_create_operation(latiitude, longtitude):
 
-    point = initialize_point(route_id, latiitude, longtitude)
+    point = initialize_point(latiitude, longtitude)
     if pointCreate(point) == False:
         raise ErrorWithCode(400, "Unsuccessful")
 

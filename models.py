@@ -29,26 +29,25 @@ class User(db.Model):
             'age': self.age,
             'height': self.height if self.height is not None else '-',
             'weight': self.weight if self.weight is not None else '-',
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'routes': [r.id for r in self.routes]
         }
 
 class Point(db.Model):
     __tablename__ = 'points'
-    route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), primary_key=True)
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longtitude = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
+    # route_start = db.relationship('Route', backref='startPos', foreign_keys = 'Route.startPos')
+    # route_end = db.relationship('Route', backref='endPos', foreign_keys = 'Route.endPos')
 
-    def __init__(self, route_id, id, latitude, longtitude):
-        self.route_id = route_id
-        self.id = id
+    def __init__(self, latitude, longtitude):
         self.latitude = latitude
         self.longtitude = longtitude
     
     def asdict(self):
         return {
-            'route': self.route.id,
             'id': self.id,
             'latitude': self.latitude,
             'longtitude': self.longtitude,
@@ -60,20 +59,27 @@ class Route(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     distance = db.Column(db.Integer, nullable=False)    # in metre
+    polyline = db.Column(db.String(255), nullable=False)
+    startPos_id = db.Column(db.Integer, db.ForeignKey('points.id'), nullable=False)
+    endPos_id = db.Column(db.Integer, db.ForeignKey('points.id'), nullable=False)
     purpose = db.Column(db.String(255), nullable=False)
-    elevationLevel = db.Column(db.String(255), nullable=False)
     calories = db.Column(db.Integer)
     ascent = db.Column(db.Integer, nullable=False)
     descent = db.Column(db.Integer, nullable=False)
-    points = db.relationship('Point', backref='route')
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
-    def __init__(self, user_id, distance, purpose, elevationLevel, ascent, descent):
+    startPos = db.relationship('Point', foreign_keys=startPos_id)
+    endPos = db.relationship('Point', foreign_keys=endPos_id)
+
+    def __init__(self, user_id, distance, polyline, purpose, ascent, descent, startPos_id, endPos_id):
         self.user_id = user_id
         self.distance = distance
         self.purpose = purpose
-        self.elevationLevel = elevationLevel,
+        self.polyline = polyline
         self.ascent = ascent,
         self.descent = descent
+        self.startPos_id = startPos_id
+        self.endPos_id = endPos_id
 
     def asdict(self):
         return {
@@ -85,10 +91,18 @@ class Route(db.Model):
             },
             'distance': self.distance,
             'purpose': self.purpose,
-            'elevationLevel': self.elevationLevel, 
+            'polyline': self.polyline,
             'calories': self.calories,
             'ascent': self.ascent,
             'descent': self.descent,
-            'count_points': len(self.points),
-            'points': [p.asdict() for p in self.points]
+            'startPos': {
+                'id': self.startPos.id,
+                'latitude': self.startPos.latitude,
+                'longtitude': self.startPos.longtitude
+            },
+            'endPos': {
+                'id': self.endPos.id,
+                'latitude': self.endPos.latitude,
+                'longtitude': self.endPos.longtitude
+            }
         }

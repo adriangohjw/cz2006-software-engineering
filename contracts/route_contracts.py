@@ -1,6 +1,7 @@
 from flask import request
 
 from contracts.user_contracts import validate_id as validate_user_id
+from contracts.point_contracts import validate_latitude, validate_longtitude
 
 
 def validate_id(id):
@@ -44,15 +45,15 @@ def validate_purpose(purpose):
         raise Exception("purpose is empty")
 
 
-def validate_elevationLevel(elevationLevel):
+def validate_polyline(polyline):
 
     # if not found in params
-    if (elevationLevel is None):
-        raise Exception("Request params (elevationLevel) not found")
+    if (polyline is None):
+        raise Exception("Request params (polyline) not found")
 
     # if description params is empty
-    if not elevationLevel: 
-        raise Exception("elevationLevel is empty")
+    if not polyline: 
+        raise Exception("polyline is empty")
 
 
 def validate_calories(calories):
@@ -116,24 +117,36 @@ def route_create_contract(request):
     user_id = request.args.get('user_id')
     distance = request.args.get('distance')
     purpose = request.args.get('purpose')
-    elevationLevel = request.args.get('elevationLevel')
+    polyline = request.args.get('polyline')
     ascent = request.args.get('ascent')
     descent = request.args.get('descent')
+    startPos_latitude = request.args.get('startPos_latitude')
+    startPos_longtitude = request.args.get('startPos_longtitude')
+    endPos_latitude = request.args.get('endPos_latitude')
+    endPos_longtitude = request.args.get('endPos_longtitude')
 
     validate_user_id(user_id)
     validate_distance(distance)
     validate_purpose(purpose)
-    validate_elevationLevel(elevationLevel)
+    validate_polyline(polyline)
     validate_ascent(ascent)
     validate_descent(descent)
+    validate_latitude(startPos_latitude)
+    validate_longtitude(startPos_longtitude)
+    validate_latitude(endPos_latitude)
+    validate_longtitude(endPos_longtitude)
 
     return {
         'user_id': user_id,
         'distance': distance,
         'purpose': purpose,
-        'elevationLevel': elevationLevel,
+        'polyline': polyline,
         'ascent': ascent,
-        'descent': descent
+        'descent': descent,
+        'startPos_latitude': startPos_latitude,
+        'startPos_longtitude': startPos_longtitude,
+        'endPos_latitude': endPos_latitude,
+        'endPos_longtitude': endPos_longtitude,
     }
 
 
