@@ -89,7 +89,7 @@ class userAPI(Resource):
         # operations
         try:
             user = user_update_operation(
-                u['id'], u['col'], u['value']
+                u['username'], u['name'], u['age'], u['height'], u['weight']
             )
         except ErrorWithCode as e:
             return make_response(

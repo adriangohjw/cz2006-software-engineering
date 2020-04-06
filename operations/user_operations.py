@@ -48,22 +48,25 @@ def user_create_operation(username, plaintext_password, name):
     return user
     
 
-def user_update_operation(id, col, value):
+def user_update_operation(username, name, age, height, weight):
 
-    user = userRead(col='id', value=id)
+    user = userRead(col='username', value=username)
 
     # user is not found
     if user is None:
         raise ErrorWithCode(404, "No user found")
 
-    if col == 'name':
-        user.name = value
-    elif col == 'age':
-        user.age = value 
-    elif col == 'height':
-        user.height = value 
-    elif col == 'weight':
-        user.weight = value 
+    if name is not None:
+        user.name = name
+    
+    if age is not None:
+        user.age = age 
+    
+    if height is not None:
+        user.height = height 
+    
+    if weight is not None:
+        user.weight = weight 
 
     if userUpdate() == False:
         raise ErrorWithCode(400, "Unsuccessful")
