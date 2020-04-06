@@ -117,6 +117,7 @@ def route_create_contract(request):
     username = request.args.get('username')
     distance = request.args.get('distance')
     purpose = request.args.get('purpose')
+    calories = request.args.get('calories')
     polyline = request.args.get('polyline')
     ascent = request.args.get('ascent')
     descent = request.args.get('descent')
@@ -128,6 +129,7 @@ def route_create_contract(request):
     validate_user_username(username)
     validate_distance(distance)
     validate_purpose(purpose)
+    validate_calories(calories)
     validate_polyline(polyline)
     validate_ascent(ascent)
     validate_descent(descent)
@@ -140,6 +142,7 @@ def route_create_contract(request):
         'username': username,
         'distance': distance,
         'purpose': purpose,
+        'calories': calories,
         'polyline': polyline,
         'ascent': ascent,
         'descent': descent,
