@@ -1,7 +1,4 @@
-from flask import request
-
-from contracts.route_contracts import validate_id as validate_route_id
-    
+from flask import request    
 
 def validate_id(id):
 
@@ -50,30 +47,24 @@ def validate_longtitude(longtitude):
 
 def point_read_contract(request):    
 
-    route_id = request.args.get('route_id')
     id = request.args.get('id')
 
-    validate_route_id(route_id)
     validate_id(id)
 
     return {
-        'route_id': int(route_id),
         'id': int(id)
     }
 
 
 def point_create_contract(request):
 
-    route_id = request.args.get('route_id')
     latitude = request.args.get('latitude')
     longtitude = request.args.get('longtitude')
 
-    validate_route_id(route_id)
     validate_latitude(latitude)
     validate_longtitude(longtitude)
 
     return {
-        'route_id': route_id,
         'latitude': latitude,
         'longtitude': longtitude
     }
