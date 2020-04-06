@@ -30,7 +30,7 @@ class User(db.Model):
             'height': self.height if self.height is not None else '-',
             'weight': self.weight if self.weight is not None else '-',
             'created_at': self.created_at,
-            'routes': [r.id for r in self.routes]
+            'routes': [r.asdict_user() for r in self.routes]
         }
 
 class Point(db.Model):
@@ -81,6 +81,27 @@ class Route(db.Model):
         self.startPos_id = startPos_id
         self.endPos_id = endPos_id
 
+    def asdict_user(self):
+        return {
+            'id': self.id,
+            'distance': self.distance,
+            'purpose': self.purpose,
+            'polyline': self.polyline,
+            'calories': self.calories,
+            'ascent': self.ascent,
+            'descent': self.descent,
+            'startPos': {
+                'id': self.startPos.id,
+                'latitude': self.startPos.latitude,
+                'longtitude': self.startPos.longtitude
+            },
+            'endPos': {
+                'id': self.endPos.id,
+                'latitude': self.endPos.latitude,
+                'longtitude': self.endPos.longtitude
+            }
+        }
+        
     def asdict(self):
         return {
             'id': self.id,
