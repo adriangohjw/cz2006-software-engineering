@@ -7,6 +7,7 @@ from controllers import \
 user_bp = Blueprint('user', __name__)
 api_user = Api(user_bp)
 api_user.add_resource(user_controllers.userAPI, '/')
+api_user.add_resource(user_controllers.userAPI_byID, '/id/')
 api_user.add_resource(user_controllers.userPasswordAPI, '/password/')
 
 route_bp = Blueprint('route', __name__)
