@@ -8,7 +8,7 @@ from exceptions import ErrorWithCode
 
 
 def initialize_route(
-    user_id, distance, polyline, purpose, ascent, descent,
+    user_id, distance, polyline, purpose, calories, ascent, descent,
     startPos_latitude, startPos_longtitude,
     endPos_latitude, endPos_longtitude
 ):
@@ -32,7 +32,7 @@ def route_read_operation(id):
 
 
 def route_create_operation(
-    username, distance, polyline, purpose, ascent, descent,
+    username, distance, polyline, purpose, calories, ascent, descent,
     startPos_latitude, startPos_longtitude,
     endPos_latitude, endPos_longtitude
 ):
@@ -43,7 +43,7 @@ def route_create_operation(
         raise ErrorWithCode(404, "No user found")
 
     route = initialize_route(
-        user.id, distance, polyline, purpose, ascent, descent,
+        user.id, distance, polyline, purpose, calories, ascent, descent,
         startPos_latitude, startPos_longtitude,
         endPos_latitude, endPos_longtitude
     )
