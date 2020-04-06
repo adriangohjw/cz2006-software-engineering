@@ -96,12 +96,12 @@ def validate_weight(weight):
 
 def user_read_contract(request):    
 
-    id = request.args.get('id')
+    username = request.args.get('username')
 
-    validate_id(id)
+    validate_username(username)
 
     return {
-        'id': int(id)
+        'username': username
     }
 
 
@@ -160,4 +160,15 @@ def user_update_password_contract(request):
         'id': int(id),
         'current_password': current_password,
         'new_password': new_password
+    }
+
+
+def user_read_contract_byID(request):    
+
+    id = request.args.get('id')
+
+    validate_id(id)
+
+    return {
+        'id': int(id)
     }
