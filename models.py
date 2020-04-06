@@ -69,10 +69,11 @@ class Route(db.Model):
     startPos = db.relationship('Point', foreign_keys=startPos_id)
     endPos = db.relationship('Point', foreign_keys=endPos_id)
 
-    def __init__(self, user_id, distance, polyline, purpose, ascent, descent, startPos_id, endPos_id):
+    def __init__(self, user_id, distance, polyline, purpose, calories, ascent, descent, startPos_id, endPos_id):
         self.user_id = user_id
         self.distance = distance
         self.purpose = purpose
+        self.calories = calories
         self.polyline = polyline
         self.ascent = ascent,
         self.descent = descent
