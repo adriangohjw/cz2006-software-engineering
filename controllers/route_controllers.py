@@ -88,7 +88,7 @@ class routeAPI(Resource):
         # operations
         try:
             route = route_update_operation(
-                u['id'], u['col'], u['value']
+                u['id'], u['calories']
             )
         except ErrorWithCode as e:
             return make_response(

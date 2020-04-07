@@ -55,7 +55,7 @@ def route_create_operation(
     return route
     
 
-def route_update_operation(id, col, value):
+def route_update_operation(id, calories):
 
     route = routeRead(id)
 
@@ -63,8 +63,8 @@ def route_update_operation(id, col, value):
     if route is None:
         raise ErrorWithCode(404, "No route found")
 
-    if col == 'calories':
-        route.calories = value
+    if calories is not None:
+        route.calories = calories
 
     if routeUpdate() == False:
         raise ErrorWithCode(400, "Unsuccessful")
