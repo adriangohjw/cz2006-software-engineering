@@ -1,3 +1,9 @@
+import sys
+from os import path, getcwd
+from flask import Flask
+from flask import request
+sys.path.append(getcwd())
+
 from flask import Flask
 from config import ConfigTest
 from flask_cors import CORS
