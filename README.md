@@ -61,3 +61,6 @@ Postman is a Collaboration Platform for API Development
 
 1. Download and install Postman from [this link](https://www.postman.com/downloads/)
 2. Go to Postman and import [collection](https://www.getpostman.com/collections/d7ca5aa3a50dd13bbbf2)
+
+## To run unit testing
+`python tests.py`

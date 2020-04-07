@@ -9,7 +9,7 @@ from contracts.user_contracts import \
     user_read_contract_byID
     
 from operations.user_operations import \
-    user_create_operation, user_read_operation, user_update_operation, user_update_operation_operation
+    user_create_operation, user_read_operation, user_update_operation, user_update_password_operation
 
 
 class userAPI(Resource):
@@ -152,7 +152,7 @@ class userPasswordAPI(Resource):
         
         # operations
         try:
-            user = user_update_operation_operation(
+            user = user_update_password_operation(
                 u['id'], u['current_password'], u['new_password']
             )
         except ErrorWithCode as e:

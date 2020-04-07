@@ -76,7 +76,7 @@ def user_update_operation(username, name, age, height, weight):
 
 
 # passwords are in plaintext
-def user_update_operation_operation(id, current_password, new_password):
+def user_update_password_operation(id, current_password, new_password):
 
     user = userRead(col='id', value=id)
 
