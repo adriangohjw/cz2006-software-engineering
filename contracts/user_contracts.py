@@ -5,93 +5,93 @@ def validate_id(id):
 
     # if not found in params
     if (id is None):
-        raise Exception("Request params (id) not found")
+        raise TypeError("Request params (id) not found")
 
     # if description params is empty
     if not id: 
-        raise Exception("id is empty")
+        raise ValueError("id is empty")
 
     # if not integer
-    if not isinstance(int(id), int):
-        raise Exception("id is not integer")
+    if not isinstance(id, int):
+        raise TypeError("id is not integer")
 
 
 def validate_username(username):
 
     # if not found in params
     if (username is None):
-        raise Exception("Request params (username) not found")
+        raise TypeError("Request params (username) not found")
 
     # if description params is empty
     if not username: 
-        raise Exception("username is empty")
+        raise ValueError("username is empty")
 
 
 def validate_password(password):
 
     # if not found in params
     if (password is None):
-        raise Exception("Request params (password) not found")
+        raise TypeError("Request params (password) not found")
 
     # if description params is empty
     if not password: 
-        raise Exception("password is empty")
+        raise ValueError("password is empty")
 
 
 def validate_name(name):
     
     # if not found in params
     if (name is None):
-        raise Exception("Request params (name) not found")
+        raise TypeError("Request params (name) not found")
 
     # if description params is empty
     if not name: 
-        raise Exception("name is empty")
+        raise ValueError("name is empty")
 
 
 def validate_age(age):
 
     # if not found in params
     if (age is None):
-        raise Exception("Request params (age) not found")
+        raise TypeError("Request params (age) not found")
 
     # if description params is empty
     if not age: 
-        raise Exception("age is empty")
+        raise ValueError("age is empty")
 
     # if not integer
-    if not isinstance(int(age), int):
-        raise Exception("age is not integer")
+    if not isinstance(age, int):
+        raise TypeError("age is not integer")
 
 
 def validate_height(height):
 
     # if not found in params
     if (height is None):
-        raise Exception("Request params (height) not found")
+        raise TypeError("Request params (height) not found")
 
     # if description params is empty
     if not height: 
-        raise Exception("height is empty")
+        raise ValueError("height is empty")
 
     # if not integer
-    if not isinstance(int(height), int):
-        raise Exception("height is not integer")
+    if not isinstance(height, int):
+        raise TypeError("height is not integer")
 
 
 def validate_weight(weight):
 
     # if not found in params
     if (weight is None):
-        raise Exception("Request params (weight) not found")
+        raise TypeError("Request params (weight) not found")
 
     # if description params is empty
     if not weight: 
-        raise Exception("weight is empty")
+        raise ValueError("weight is empty")
 
     # if not integer
-    if not isinstance(int(weight), int):
-        raise Exception("weight is not integer")
+    if not isinstance(weight, int):
+        raise TypeError("weight is not integer")
 
 
 def user_read_contract(request):    
@@ -126,14 +126,14 @@ def user_update_contract(request):
 
     username = request.args.get('username')
     name = request.args.get('name')
-    age = request.args.get('age')
-    height = request.args.get('height')
-    weight = request.args.get('weight')
+    age = request.args.get('age', type=int)
+    height = request.args.get('height', type=int)
+    weight = request.args.get('weight', type=int)
 
     validate_username(username)
 
     if (name is None) and (age is None) and (height is None) and (weight is None):
-        raise Exception("no params being passed in")         
+        raise TypeError("no params being passed in")         
 
     if name is not None:
         validate_name(name)
@@ -150,15 +150,15 @@ def user_update_contract(request):
     return {
         'username': username,
         'name': name,
-        'age': age,
-        'height': height,
-        'weight': weight,
+        'age': int(age) if age is not None else age,
+        'height': int(height) if age is not None else height,
+        'weight': int(weight) if age is not None else weight
     }
 
 
 def user_update_password_contract(request):
     
-    id = request.args.get('id')
+    id = request.args.get('id', type=int)
     current_password = request.args.get('current_password')
     new_password = request.args.get('new_password')
 
@@ -175,7 +175,7 @@ def user_update_password_contract(request):
 
 def user_read_contract_byID(request):    
 
-    id = request.args.get('id')
+    id = request.args.get('id', type=int)
 
     validate_id(id)
 
