@@ -15,5 +15,9 @@ from operations.tests.test_user_operations import Test_users_operations
 from operations.tests.test_route_operations import Test_route_operations
 from operations.tests.test_point_operations import Test_point_operations
 
+from dao.tests.test_user_dao import Test_user_dao
+from dao.tests.test_route_dao import Test_route_dao
+from dao.tests.test_point_dao import Test_point_dao
+
 if __name__ == '__main__':
     unittest.main()
