@@ -16,7 +16,7 @@ def initialize_route(
     startPos = point_create_operation(startPos_latitude, startPos_longtitude)
     endPos = point_create_operation(endPos_latitude, endPos_longtitude)
     
-    return Route(user_id, distance, polyline, purpose, ascent, descent, startPos.id, endPos.id)
+    return Route(user_id, distance, polyline, purpose, calories, ascent, descent, startPos.id, endPos.id)
 
 
 def route_read_operation(id):
