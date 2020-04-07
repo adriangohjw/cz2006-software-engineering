@@ -10,6 +10,7 @@ from config import GMAPS_KEY
 from exceptions import ErrorWithCode
 
 from Algorithms.routes_search_algo import SearchResult
+from Algorithms.popular_routes_algo import PopularRoutes
 from Algorithms.live_stats_algo import LiveStats
 
 from operations.route_operations import route_read_operation
@@ -21,8 +22,8 @@ def routes_search_algo_operation(start, end, fit_level, weight):
     return res.values.tolist()[0][0]
 
 
-def popular_routes_algo_operation():
-    return
+def popular_routes_algo_operation(weight):
+    return 
 
 
 def live_stats_algo_operation(route_id):

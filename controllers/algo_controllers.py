@@ -59,7 +59,9 @@ class PopularRoutesAlgoAPI(Resource):
 
         # operations
         try:
-            point = popular_routes_algo_operation(p['id'])
+            point = popular_routes_algo_operation(
+                p['weight']
+            )
         except ErrorWithCode as e:
             return make_response(
                 jsonify (
