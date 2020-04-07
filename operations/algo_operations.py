@@ -2,9 +2,18 @@ import sys
 from os import path, getcwd
 sys.path.append(getcwd())
 
+import requests
 import googlemaps
 from datetime import datetime
+import polyline
+import json
+import pandas as pd
+import numpy as np
+import geopandas
+import re
+import random
 
+from config import MAP_QUEST_KEY
 from config import GMAPS_KEY
 
 from exceptions import ErrorWithCode
@@ -17,13 +26,14 @@ from operations.route_operations import route_read_operation
 from operations.point_operations import point_read_operation
 
 
-def routes_search_algo_operation(start, end, fit_level, weight):
-    res = SearchResult(start, end, fit_level, weight)
-    return res.values.tolist()[0][0]
+def routes_search_algo_operation(start, end, fit_level, weight, max_dist, cal):
+    res = SearchResult(start, end, fit_level, weight, max_dist, cal)
+    return res.values.tolist()
 
 
 def popular_routes_algo_operation(weight):
-    return 
+    res = PopularRoutes(weight)
+    return res.values.tolist()
 
 
 def live_stats_algo_operation(route_id):
