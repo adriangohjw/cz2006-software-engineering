@@ -2,6 +2,7 @@ from flask import request
 
 from contracts.point_contracts import validate_latitude, validate_longtitude
 from contracts.user_contracts import validate_weight
+from contracts.route_contracts import validate_id as validate_route_id
 
 
 def validate_fit_level(fit_level):
@@ -44,4 +45,12 @@ def popular_routes_algo_contracts(request):
     
 
 def live_stats_algo_contracts(request):
-    return
+
+    route_id = request.args.get('route_id')
+
+    validate_route_id(route_id)
+
+    return {
+        'route_id': int(route_id)
+    }
+    

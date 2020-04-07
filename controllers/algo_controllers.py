@@ -79,7 +79,7 @@ class LiveStatsAlgoAPI(Resource):
 
         # contracts
         try:
-            p = live_stats_algo_contracts(request)
+            r = live_stats_algo_contracts(request)
         except Exception as e:
             return make_response(
                 jsonify (
@@ -89,7 +89,9 @@ class LiveStatsAlgoAPI(Resource):
 
         # operations
         try:
-            point = live_stats_algo_operation(p['id'])
+            stats = live_stats_algo_operation(
+                r['route_id']
+            )
         except ErrorWithCode as e:
             return make_response(
                 jsonify (
@@ -99,5 +101,7 @@ class LiveStatsAlgoAPI(Resource):
         
         # success case
         return make_response(
-            jsonify (point.asdict()), 200
+            jsonify (
+                points = stats
+            ), 200
         )
