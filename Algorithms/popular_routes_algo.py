@@ -15,10 +15,9 @@ from config import GMAPS_KEY
 
 def RouteStatsCalc(routes):
     res=[]
-    for i in range(len(routes)):
-            
+
+    for i in range(len(routes)):        
         l=[]
-        
         a=polyline.decode(routes[i]['overview_polyline']['points'])
         
         for j in range(len(a)):
@@ -29,18 +28,19 @@ def RouteStatsCalc(routes):
         elevation = pd.DataFrame((json.loads(r.content))['elevationProfile'])
         roc = [0]
         for i in range(len(elevation)-1):
-            roc.append((elevation["height"][i+1] - elevation["height"][i])/(elevation["distance"][i+1] - elevation["distance"][i]))
-        elevation["roc"]=roc
-        asc=0
-        desc=0
+            roc.append((elevation["height"][i+1] - elevation["height"][i]) / (elevation["distance"][i+1] - elevation["distance"][i]))
+        elevation["roc"] = roc
+        asc = 0
+        desc = 0
         for i in range(len(elevation)):
-            if (elevation["roc"][i]<0):
+            if (elevation["roc"][i] < 0):
                 desc += (elevation["distance"][i] - elevation["distance"][i-1])
-            elif (elevation["roc"][i]>0):
+            elif (elevation["roc"][i] > 0):
                 asc += (elevation["distance"][i] - elevation["distance"][i-1])
         flat = elevation['distance'][len(elevation)-1] - asc -desc
         total_dist = elevation['distance'][len(elevation)-1]
         res.append([asc,desc,flat, total_dist])
+
     return res
 
 
@@ -49,10 +49,10 @@ def PopularRoutes(weight):
     for i in range(len(df2)):     
         df2["Description"][i] = df2["Description"][i][re.search("\s<td>", df2["Description"][i]).span()[1]:re.search("</td>", df2["Description"][i]).span()[0]]
         a = list(df2["Description"].value_counts().keys())
-        res=[]
+        res = []
     for i in range(len(a)):
-        b=[]
-        for j in df2[df2["Description"]==a[i]].geometry:
+        b = []
+        for j in df2[df2["Description"] == a[i]].geometry:
             try:
                 for i in (j.coords):
                     b.append([i[1],i[0]])
@@ -79,7 +79,7 @@ def PopularRoutes(weight):
                 l[i]= 1
             else:
                 l[i] = 2
-        elif (df["Ascent"][i] > df["Descent"][i]):
+        else:
             if (df["Ascent"][i] < df["Flat"][i]):
                 l[i]= 4
             else:
@@ -90,15 +90,15 @@ def PopularRoutes(weight):
     MET = [4.9,6.8,8,11,15.8]
     speed = [8,11,13,16.25,22]
     calories = []
-    tim=[]
+    tim = []
     
     for i in range(len(df)):
-        calpm = (MET[df["FitLevel"][i]-1]*weightkg*3.5)/200
+        calpm = (MET[df["FitLevel"][i]-1] * weightkg * 3.5) / 200
         distkm = df["Total Distance"][i]
         distmile = distkm * 0.621371
-        time = (distmile / speed[df["FitLevel"][i]-1])*60
+        time = (distmile / speed[df["FitLevel"][i]-1]) * 60
         tim.append(time)
-        calories.append(calpm*time)
+        calories.append(calpm * time)
 
     df["Time"] = tim
     df["Calories"] = calories
