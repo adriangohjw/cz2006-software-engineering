@@ -60,7 +60,7 @@ If you face error, delete the folder "migrations" and try the above steps again.
 Postman is a Collaboration Platform for API Development
 
 1. Download and install Postman from [this link](https://www.postman.com/downloads/)
-2. Go to Postman and import [collection](https://www.getpostman.com/collections/d7ca5aa3a50dd13bbbf2)
+2. Go to Postman and [join the team](https://app.getpostman.com/join-team?invite_code=bd6c25557a885c34cf660dff1156c0a8&ws=3f9319a1-921e-4a92-af38-cc946d30ee25)
 
 ## To run unit testing
 `python tests.py`
