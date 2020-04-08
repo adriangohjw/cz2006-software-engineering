@@ -28,7 +28,7 @@ class RoutesSearchAlgoAPI(Resource):
         # operations
         try:
             route = routes_search_algo_operation(
-                r['start'], r['end'], r['fit_level'], r['weight']
+                r['start'], r['end'], r['fit_level'], r['weight'], r['max_dist'], r['cal']
             )
         except ErrorWithCode as e:
             return make_response(
