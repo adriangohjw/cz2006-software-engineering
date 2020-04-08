@@ -81,8 +81,7 @@ class Test_route_dao(unittest.TestCase):
 
         self.assertEqual(len(Route.query.all()), 1)
 
-        db.session.delete(route)
-        db.session.commit()
+        routeDelete(1)
 
         self.assertEqual(len(Route.query.all()), 0)
 

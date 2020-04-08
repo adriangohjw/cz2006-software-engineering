@@ -1,9 +1,8 @@
 import sys
 from os import path, getcwd
-from flask import Flask
-from flask import request
 sys.path.append(getcwd())
 
+from flask import request
 import unittest
 from models import db
 
@@ -155,6 +154,23 @@ class Test_route_contracts(unittest.TestCase):
 
         with app.test_request_context('/?id=hello&calories=10', method='PUT'):
             self.assertRaises(TypeError, route_update_contract, request)
+
+
+    def test_route_delete_contract(self):
+
+        with app.test_request_context('/?id=1', method='DELETE'):
+            self.assertEqual(
+                route_delete_contract(request), 
+                {
+                    'id': 1,
+                }
+            )
+
+        with app.test_request_context('/?id=hello', method='DELETE'):
+            self.assertRaises(TypeError, route_delete_contract, request)
+
+        with app.test_request_context('/?id=', method='DELETE'):
+            self.assertRaises(TypeError, route_delete_contract, request)
 
 
 if __name__ == '__main__':

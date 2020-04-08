@@ -5,7 +5,6 @@ import polyline
 import json
 import pandas as pd
 import numpy as np
-import random
 
 from config import MAP_QUEST_KEY
 from config import GMAPS_KEY

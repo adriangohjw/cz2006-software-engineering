@@ -1,9 +1,8 @@
 import sys
 from os import path, getcwd
-from flask import Flask
-from flask import request
 sys.path.append(getcwd())
 
+from flask import request
 import unittest
 from models import db
 

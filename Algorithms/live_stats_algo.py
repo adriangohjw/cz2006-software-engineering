@@ -1,6 +1,4 @@
 import requests
-import googlemaps
-from datetime import datetime
 import polyline
 import json
 import pandas as pd
