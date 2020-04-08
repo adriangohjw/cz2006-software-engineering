@@ -1,17 +1,9 @@
 import sys
-from os import path, getcwd
+from os import getcwd
 sys.path.append(getcwd())
 
-import requests
 import googlemaps
 from datetime import datetime
-import polyline
-import json
-import pandas as pd
-import numpy as np
-import geopandas
-import re
-import random
 
 from config import MAP_QUEST_KEY
 from config import GMAPS_KEY
