@@ -1,5 +1,5 @@
 import sys
-from os import getcwd
+from os import path, getcwd
 sys.path.append(getcwd())
 
 import googlemaps
