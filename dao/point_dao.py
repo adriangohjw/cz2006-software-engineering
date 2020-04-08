@@ -1,4 +1,3 @@
-from sqlalchemy import desc 
 from models import db, Point
 
 def pointCreate(point):

@@ -1,7 +1,5 @@
 import sys
-from os import path, getcwd
-from flask import Flask
-from flask import request
+from os import getcwd
 sys.path.append(getcwd())
 
 import unittest

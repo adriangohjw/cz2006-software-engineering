@@ -1,5 +1,5 @@
 import sys
-from os import path, getcwd
+from os import getcwd
 sys.path.append(getcwd())
 
 import unittest 
