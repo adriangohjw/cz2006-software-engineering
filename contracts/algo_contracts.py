@@ -33,19 +33,32 @@ def validate_fit_level(fit_level):
 
 def validate_maxDist(max_dist):
 
-    if (max_dist is not None):
-        # if not integer
-        if not isinstance(max_dist, int):
-            raise TypeError("max_dist is not integer")
+    # if not found in params
+    if (max_dist is None):
+        raise TypeError("Request params (max_dist) not found")
+
+    # if description params is empty
+    if not max_dist: 
+        raise ValueError("max_dist is empty")
+
+    # if not integer
+    if not isinstance(max_dist, int):
+        raise TypeError("max_dist is not integer")
         
         
 def validate_calories(cal):
 
-    if (cal is not None):
-        # if not integer
-        if not isinstance(cal, int):
-            raise TypeError("cal is not integer")
-        
+    # if not found in params
+    if (cal is None):
+        raise TypeError("Request params (cal) not found")
+
+    # if description params is empty
+    if not cal: 
+        raise ValueError("cal is empty")
+
+    # if not integer
+    if not isinstance(cal, int):
+        raise TypeError("cal is not integer")
         
 def routes_search_algo_contracts(request):
 
@@ -55,8 +68,8 @@ def routes_search_algo_contracts(request):
     endPos_long = request.args.get('endPos_long', type=float)
     fit_level = request.args.get('fit_level')
     weight = request.args.get('weight', type=int)
-    max_dist = request.args.get('max_dist', default=None) ,#can type=int be added
-    cal = request.args.get('cal', default=None) ,#can type=int be added
+    max_dist = request.args.get('max_dist', type=int) 
+    cal = request.args.get('cal', type=int) 
     
     validate_latitude(startPos_lat)
     validate_longtitude(startPos_long)
@@ -64,16 +77,18 @@ def routes_search_algo_contracts(request):
     validate_longtitude(endPos_long)
     validate_fit_level(fit_level)
     validate_weight(weight)
-    validate_maxDist(max_dist)
-    validate_calories(cal)
+    if max_dist is not None:
+        validate_maxDist(max_dist)
+    if cal is not None:
+        validate_calories(cal)
 
     return {
         'start': str(startPos_lat) + ', ' + str(startPos_long),
         'end': str(endPos_lat) + ', ' + str(endPos_long),
         'fit_level': int(fit_level),
         'weight': int(weight),
-        'max_dist': max_dist,
-        'cal': cal
+        'max_dist': int(max_dist) if max_dist is not None else max_dist,
+        'cal': int(cal) if cal is not None else cal
     }
 
 

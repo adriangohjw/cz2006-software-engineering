@@ -71,7 +71,7 @@ class PopularRoutesAlgoAPI(Resource):
         
         # success case
         return make_response(
-            jsonify (point.asdict()), 200
+            jsonify (point), 200
         )
 
 
