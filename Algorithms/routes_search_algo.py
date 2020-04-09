@@ -63,7 +63,7 @@ def SearchResult(start, end, fit_level, weight, max_dist=None, cal=None):
             if (df["Total Distance"][i] > max_dist):
                 drop.append(i)
         df.drop(drop, inplace=True)
-    
+    df.index = np.arange(len(df))
     l = list(np.zeros(len(df)))
     for i in range(len(df)):
         if (df["DiffRat"][i] < 0.05):
@@ -96,6 +96,13 @@ def SearchResult(start, end, fit_level, weight, max_dist=None, cal=None):
 
     df["Time"] = tim
     df["Calories"] = calories
+    if(cal!=None):
+        drop=[]
+        for i in range(len(df)):
+            if ((df["Calories"][i]<cal-150)or(df["Calories"][i]>cal+150)):
+                drop.append(i)
+        df.drop(drop, inplace=True)
+    df.index = np.arange(len(df))
     df1 = df[df["FitLevel"] == fit_level]
 
     if (df1.shape[0] == 0):
