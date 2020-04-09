@@ -151,8 +151,8 @@ def user_update_contract(request):
         'username': username,
         'name': name,
         'age': int(age) if age is not None else age,
-        'height': int(height) if age is not None else height,
-        'weight': int(weight) if age is not None else weight
+        'height': int(height) if height is not None else height,
+        'weight': int(weight) if weight is not None else weight
     }
 
 
