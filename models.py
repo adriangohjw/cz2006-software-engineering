@@ -98,7 +98,8 @@ class Route(db.Model):
                 'id': self.endPos.id,
                 'latitude': self.endPos.latitude,
                 'longtitude': self.endPos.longtitude
-            }
+            },
+            'created_at': self.created_at
         }
         
     def asdict(self):
@@ -124,5 +125,6 @@ class Route(db.Model):
                 'id': self.endPos.id,
                 'latitude': self.endPos.latitude,
                 'longtitude': self.endPos.longtitude
-            }
+            },
+            'created_at': self.created_at
         }
