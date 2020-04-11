@@ -185,7 +185,7 @@ class AuthenticationAPI(Resource):
 
         # operations
         try:
-            user = auth_operation(
+            res = auth_operation(
                 u['username'], u['password']
             )
         except ErrorWithCode as e:
@@ -197,5 +197,7 @@ class AuthenticationAPI(Resource):
         
         # success case
         return make_response(
-            jsonify (user.asdict()), 200
+            jsonify (
+                result = res
+            ), 200
         )
