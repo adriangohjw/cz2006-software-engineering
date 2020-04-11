@@ -1,4 +1,5 @@
 import 'dart:async';
+import'main.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -12,16 +13,18 @@ import 'package:google_maps_webservice/places.dart';
 import 'SearchResults.dart';
 
 class Search extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+  int id;
+  Search({@required this.id});
+  _MyAppState createState() => _MyAppState(userid:id);
 }
 
 GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8");
 
 class _MyAppState extends State<Search> {
-  int userid = 1;//has to be extracted from previous file
-  
+  int userid;//has to be extracted from previous file
+  _MyAppState({@required this.userid});
+
   BitmapDescriptor sourceicon;
   Completer<GoogleMapController> _controller = Completer();
   String googleAPIKey = "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8";
@@ -223,7 +226,7 @@ class _MyAppState extends State<Search> {
                   onPressed: () async {
                     await getSearchResults();
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyHomePage(id: userid, routes:SearchResults, length: SearchResults[0].length, search: searchAttr,)),
+                      MaterialPageRoute(builder: (context) => MyRecommPage(id: userid, routes:SearchResults, length: SearchResults[0].length, search: searchAttr,)),
                     );
                   }),
             ),

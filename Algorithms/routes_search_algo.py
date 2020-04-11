@@ -111,7 +111,10 @@ def SearchResult(start, end, fit_level, weight, max_dist=None, cal=None):
 
     if (df1.shape[0] == 0):
         df2 = df[df["FitLevel"]!=fit_level]
-        df2.sort_values(by=['Total Distance'], inplace=True)
+        if(fit_level <=3):
+            df2.sort_values(by=['Total Distance'], inplace=True)
+        else:
+            df2.sort_values(by=['Total Distance'], inplace=True, ascending = False)
         return df2
     else:
         df1.sort_values(by=['Total Distance'], inplace=True)

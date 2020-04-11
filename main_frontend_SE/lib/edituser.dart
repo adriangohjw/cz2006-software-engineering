@@ -54,7 +54,7 @@ class _EditUserState extends State<EditUser> {
                   onPressed: () {
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) {
-                      return ProfilePage();
+                      Navigator.pop(context);
                     }), ModalRoute.withName('/'));
                   },
                   color: Colors.white,

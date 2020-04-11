@@ -158,16 +158,16 @@ def user_update_contract(request):
 
 def user_update_password_contract(request):
     
-    id = request.args.get('id', type=int)
+    username = request.args.get('username')
     current_password = request.args.get('current_password')
     new_password = request.args.get('new_password')
 
-    validate_id(id)
+    validate_username(username)
     validate_password(current_password)
     validate_password(new_password)
 
     return {
-        'id': int(id),
+        'username': username,
         'current_password': current_password,
         'new_password': new_password
     }

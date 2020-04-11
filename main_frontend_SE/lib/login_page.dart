@@ -1,12 +1,26 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'sign_in.dart';
 import 'new_user.dart';
-import 'Widgets/FormCard.dart';
+import 'profile.dart';
 import 'util/screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'main.dart';
 
 //import '.././util/screenutil.dart';
 //import '.././models/user.dart';
+
+class Data {
+  String username;
+  int id;
+
+  Data({this.username, this.id});
+}
+
+final Data data = Data(username: '', id: 0);
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: <String>[
@@ -97,7 +111,7 @@ class FirstScreen extends StatelessWidget {
                     color: Colors.black54),
               ),
               Text(
-                name,
+                name_g,
                 style: TextStyle(
                     fontSize: 25,
                     color: Colors.deepPurple,
@@ -112,7 +126,7 @@ class FirstScreen extends StatelessWidget {
                     color: Colors.black54),
               ),
               Text(
-                email,
+                email_g,
                 style: TextStyle(
                     fontSize: 25,
                     color: Colors.deepPurple,
@@ -148,15 +162,8 @@ class FirstScreen extends StatelessWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _isSelected = false;
-  TextEditingController _myController = new TextEditingController();
-  TextEditingController _myPassController = new TextEditingController();
-  void _radio() {
-    setState(() {
-      _isSelected = !_isSelected;
-    });
-  }
-
+  TextEditingController _myUsername = new TextEditingController();
+  TextEditingController _myPassword = new TextEditingController();
   Widget radioButton(bool isSelected) => Container(
         width: 16.0,
         height: 16.0,
@@ -176,201 +183,189 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    final _formKey = GlobalKey<FormState>();
-    //Model model = Model();
-
-    @override
-    
-    String username;
-    String password;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.white,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 50),
-            child: Image(
-                image: AssetImage("assets/primusnameicon.png"), height: 150.0),
+          Expanded(
+            child: Container(),
+            flex: 5,
           ),
-          //FirstTime(),
-          // InkWell(
-          //   child: Container(
-          //     width: ScreenUtil.getInstance().setWidth(200),
-          //     height: ScreenUtil.getInstance().setHeight(50),
-          //     decoration: BoxDecoration(
-          //         gradient: LinearGradient(
-          //             colors: [Color(0xFFFFFFFF), Color(0XFFFFFFFF)]),
-          //         borderRadius: BorderRadius.circular(1.0),
-          //         boxShadow: [
-          //           BoxShadow(
-          //               color: Color(0x0000000).withOpacity(.1),
-          //               offset: Offset(0.0, 0.0),
-          //               blurRadius: 1.0)
-          //         ]),
-          //     child: Material(
-          //       color: Colors.transparent,
-          //       child: InkWell(
-          //         onTap: () {
-          //           Navigator.of(context).push(
-          //             MaterialPageRoute(
-          //               builder: (context) {
-          //                 return RegisterForm();
-          //               },
-          //             ),
-          //           );
-          //         },
-          //         child: Center(
-          //           child: Text("REGISTER",
-          //               style: TextStyle(
-          //                   color: Colors.black,
-          //                   fontFamily: "Poppins-Bold",
-          //                   fontSize: 10,
-          //                   letterSpacing: 1.0)),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Card(
-            semanticContainer: true,
-            margin: EdgeInsets.only(right: 20, left: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+          Expanded(
+            flex: 15,
+            child: Container(
+              alignment: Alignment.center,
+              child: Image(image: AssetImage("assets/primusnameicon.png")),
             ),
-            elevation: 10,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                width: 500,
-                height: 240,
-                margin: EdgeInsets.all(20),
-                child: Column(
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      height: 45,
-                      child: Text("Login",
-                          style: TextStyle(
-                              fontSize: 20,
-                              letterSpacing: .6,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.only(top: 10),
-                      child: TextField(
-                        controller: _myController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Username',
-                        ),
-                        onSubmitted: (String value) {
-                          _myController.text = value;
-                        },
-                      ),
-                    ),
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.only(top: 10),
-                      child: TextField(
-                        obscureText: true,
-                        controller: _myPassController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Password',
-                        ),
-                        onSubmitted: (String value) {
-                          _myPassController.text = value;
-                        },
-                      ),
-                    ),
-                    Container(
-                      height: 30,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+          ),
+          Spacer(),
+          Expanded(
+            flex: 40,
+            child: Container(
+              alignment: Alignment.center,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                height: 275,
+                child: Card(
+                  semanticContainer: true,
+                  margin: EdgeInsets.only(right: 20, left: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 10,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      width: 500,
+                      margin: EdgeInsets.all(20),
+                      child: Column(
                         children: <Widget>[
-                          Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontFamily: "Poppins-Medium",
-                                fontSize: ScreenUtil.getInstance().setSp(25)),
-                          )
+                          Container(
+                            alignment: Alignment.center,
+                            height: 45,
+                            child: Text("Login",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    letterSpacing: .6,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          Container(
+                            height: 80,
+                            padding: EdgeInsets.only(top: 10),
+                            child: TextField(
+                              controller: _myUsername,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Username',
+                              ),
+                              onSubmitted: (String value) {
+                                _myUsername.text = value;
+                              },
+                            ),
+                          ),
+                          Container(
+                            height: 80,
+                            padding: EdgeInsets.only(top: 10),
+                            child: TextField(
+                              obscureText: true,
+                              controller: _myPassword,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Password',
+                              ),
+                              onSubmitted: (String value) {
+                                _myPassword.text = value;
+                              },
+                            ),
+                          ),
+                          Container(
+                            height: 30,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontFamily: "Poppins-Medium",
+                                      fontSize:
+                                          ScreenUtil.getInstance().setSp(25)),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 20, right: 20, left: 20),
-            alignment: Alignment.topLeft,
-            //color: Colors.red,
-            height: 30,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                  flex: 75,
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Your first time?',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
-                        ),
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => NewUser()));
-                          },
-                          child: Text(
-                            'SIGN UP',
+              ), 
+            Container(
+              margin: EdgeInsets.only(top: 20, right: 20, left: 20),
+              height: 60,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    flex: 75,
+                    child: Container(
+                      color: Colors.white,
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Your first time?',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 17,
                               color: Colors.black,
                             ),
-                            textAlign: TextAlign.right,
                           ),
-                        ),
-                      ],
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => NewUser()));
+                            },
+                            child: Text(
+                              'SIGN UP',
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 25,
-                  child: Container(
-                    child: RaisedButton(
-                      color: Colors.black,
-                      splashColor: Colors.white,
-                      child: const Text(
-                        'SIGN IN',
-                        style: TextStyle(
-                          color: Colors.white,
+                  Expanded(
+                    flex: 25,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 40,
+                        child: RaisedButton(
+                          color: Colors.black,
+                          splashColor: Colors.white,
+                          child: const Text(
+                            'SIGN IN',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          onPressed: () async {
+                            data.username = _myUsername.text;
+                            //print('works');
+                            getid(_myUsername.text, _myPassword.text, context);
+                            //User user = await fetchPost(_myUsername.text);
+                           
+                            
+                          },
                         ),
                       ),
-                      onPressed: _handleSignIn,
                     ),
                   ),
-                )
-              ],
+                ],
+              ),
+            ),],
+            ),
             ),
           ),
-
-          Container(
-            height: 50,
-            margin: EdgeInsets.only(top: 30),
-            child: _signInButton(),
+          
+          Expanded(
+            flex: 15,
+            child: Container(
+              alignment: Alignment.center,
+              child: Container(
+                height: 50,
+                //margin: EdgeInsets.only(top: 30),
+                child: _signInButton(),
+              ),
+            ),
           ),
         ],
       ),
@@ -425,3 +420,77 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+// Future<User> fetchPost(String uname) async {
+//   print('Done');
+//   final response =
+  
+//       await http.get('http://localhost:3333/users/?username=${uname}');
+
+//   if (response.statusCode == 200) {
+//     // If the call to the server was successful (returns OK), parse the JSON.
+//     return User.fromJson(json.decode(response.body));
+//   } else {
+//     // If that call was not successful (response was unexpected), it throws an error.
+//     throw Exception('Failed to load post');
+//   }
+// }
+
+Future getid(String uname, String pcode, BuildContext context) async{
+  
+  final response1 =
+      await http.get('http://localhost:3333/users/?username=${uname}');
+      
+      if (response1.statusCode==200)
+  {
+    String pass = (json.decode(response1.body))['password'];
+    print(pass);
+    print(pcode);
+    if(pass == pcode){
+      data.id =  (json.decode(response1.body))['id'];
+      Navigator.push(context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(id: data.id,)));
+    }
+    else if(pass != pcode){
+      print("Wrong Pass");
+      return false;
+    }
+  } 
+  else{
+  print('WrongUser');
+  return false;
+    
+  }
+}
+
+// Future<User> fetchPostCreateUser() async {
+//   final response = await http.put(
+//       'http://localhost:3333/users/?age=${age.text}&height=${height.text}&weight=${weight.text}&username=${username.text}');
+
+//   if (response.statusCode == 200) {
+//     // If the call to the server was successful (returns OK), parse the JSON.
+//     return User.fromJson(json.decode(response.body));
+//   } else {
+//     // If that call was not successful (response was unexpected), it throw an error.
+//     throw Exception('Failed to load post');
+//   }
+// }
+
+// class User {
+//   final String name;
+//   final String username;
+//   final int id;
+
+//   final String password;
+
+//   User({this.id, this.name, this.username, this.password});
+
+//   factory User.fromJson(Map<String, dynamic> json) {
+//     return User(
+//       id: json['id'],
+//       username: json['username'],
+//       name: json['name'],
+//     );
+//   }
+// }

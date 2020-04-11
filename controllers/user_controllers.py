@@ -153,7 +153,7 @@ class userPasswordAPI(Resource):
         # operations
         try:
             user = user_update_password_operation(
-                u['id'], u['current_password'], u['new_password']
+                u['username'], u['current_password'], u['new_password']
             )
         except ErrorWithCode as e:
             return make_response(

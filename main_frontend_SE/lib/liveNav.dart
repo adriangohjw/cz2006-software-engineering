@@ -456,7 +456,7 @@ class MapPageState extends State<LiveNav> {
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return new AlertDialog(
-        title: new Text('Toute is complete!'),
+        title: new Text('Route is complete!'),
         content: new SingleChildScrollView(
           child: new ListBody(
             children: <Widget>[

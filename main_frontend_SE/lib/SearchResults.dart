@@ -27,16 +27,16 @@ const double CAMERA_BEARING = 30;
 //   }
 // }
 
-class MyHomePage extends StatefulWidget {
+class MyRecommPage extends StatefulWidget {
   var routes;
   int id;
   int length;
   var search;
-  MyHomePage({@required this.routes, @required this.id, @required this.length, @required this.search});
+  MyRecommPage({@required this.routes, @required this.id, @required this.length, @required this.search});
   State<StatefulWidget> createState() => RecommenderState(UserID:id, searchOutput:routes, len:length, searchAttr: search);
 }
 
-class RecommenderState extends State<MyHomePage> {
+class RecommenderState extends State<MyRecommPage> {
   var searchOutput;
   int UserID;
   int len;
@@ -54,9 +54,8 @@ class RecommenderState extends State<MyHomePage> {
   BitmapDescriptor sourceIcon;
   BitmapDescriptor destinationIcon;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  int _fitnessSliderInitVal = 5;
   double maxDist;
-  double minCal;
+  int minCal;
   TextEditingController _textcontrollerdist = new TextEditingController();
   TextEditingController _textcontrollercalo = new TextEditingController();
     
@@ -141,68 +140,10 @@ class RecommenderState extends State<MyHomePage> {
                   labelText: 'Total Calories to burn (KCal))',
                 ),
                 onSubmitted: (String value) {
-                  minCal = double.parse(value);
+                  minCal = double.parse(value).round();
                   _textcontrollercalo.text =
                       value; // Should update to database only if the tick button is clicked.
                 },
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 20),
-              height: 50,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    flex: 150,
-                    child: Icon(
-                      Icons.airline_seat_recline_extra,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 700,
-                    child: Container(
-                      height: 40,
-                      child: SliderTheme(
-                        child: Slider(
-                          value: _fitnessSliderInitVal
-                              .toDouble(), // This value should be taken from the database, and used as initial value
-                          min: 1,
-                          max: 5,
-                          divisions: 4,
-                          onChanged: (double newValue) {
-                            setState(() {
-                              _fitnessSliderInitVal = newValue
-                                  .round(); // Should update to database only if the tick button is clicked.
-                            });
-                          },
-                          onChangeEnd: (double newValue) {
-                            print('Ended change on $newValue');
-                          },
-                          onChangeStart: (double startValue) {
-                            print('Started change at $startValue');
-                          },
-                        ),
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 30,
-                          thumbShape:
-                              RoundSliderThumbShape(enabledThumbRadius: 0),
-                          thumbColor: Colors.black,
-                          activeTrackColor: Colors.black,
-                          inactiveTrackColor: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 150,
-                    child: Icon(
-                      Icons.fitness_center,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
               ),
             ),
             Container(
@@ -221,7 +162,7 @@ class RecommenderState extends State<MyHomePage> {
                         print("YYYYYYYYYYYYEEEEEEEEEEEEEHHHHHHHHHHHHHHHHAAAAAAAAAAAAAAAAAWWWWWWWWWWWWWWWWW!!!!!!!!!!");
                         print(SearchResultsLat[1]);
                         Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => MyHomePage(id: UserID, routes:SearchResultsLat, length: SearchResultsLat[0].length, search: searchAttr,)),
+                      MaterialPageRoute(builder: (context) => MyRecommPage(id: UserID, routes:SearchResultsLat, length: SearchResultsLat[0].length, search: searchAttr,)),
                     );
                       },
                     ),
@@ -236,9 +177,7 @@ class RecommenderState extends State<MyHomePage> {
                         _textcontrollercalo.value = TextEditingValue.empty;
                         _textcontrollerdist.value = TextEditingValue.empty;
 
-                        setState(() {
-                          _fitnessSliderInitVal = 5;
-                        });
+                        
                         Navigator.pop(context);
                       },
                     ),
@@ -538,11 +477,15 @@ class RecommenderState extends State<MyHomePage> {
   searchAttr.add(searchAttr[3]);
   searchAttr.add(searchAttr[4]);
   searchAttr.add(searchAttr[5]);
-  if ((maxDist)!=null) {
-      url = url+'&max_dist='+maxDist.round().toString();
+  print("YEEEEEEEE");
+  print(_textcontrollerdist.text);
+  print(_textcontrollercalo.text);
+  print(searchAttr[4]);
+  if ((_textcontrollerdist.text)!="") {
+      url = url+'&max_dist='+_textcontrollerdist.text;
   }
-  if ((minCal)!=null) {
-      url = url+'&cal='+minCal.round().toString();
+  if ((_textcontrollercalo.text)!="") {
+      url = url+'&cal='+_textcontrollercalo.text;
   }
 
   var response3 = await http.get(url);
