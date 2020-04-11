@@ -15,7 +15,7 @@ db.init_app(app)
 from operations.user_operations import \
     encrypt, authenticate, initialize_user, \
     user_read_operation, user_create_operation, user_update_operation, \
-    user_update_password_operation
+    user_update_password_operation, auth_operation
 
 
 class Test_users_operations(unittest.TestCase):
@@ -86,6 +86,13 @@ class Test_users_operations(unittest.TestCase):
             user_update_password_operation(2, 'password', 'password_new')
     
         self.assertIsNotNone(user_update_password_operation(1, 'password', 'password_new'))
+
+    
+    def test_auth_operation(self):
+
+        self.assertRaises(ErrorWithCode, auth_operation, 'johndoe1', 'password')
+        self.assertTrue(auth_operation('johndoe', 'password'))
+        self.assertFalse(auth_operation('johndoe', 'password_wrong'))
 
 
 if __name__ == '__main__':

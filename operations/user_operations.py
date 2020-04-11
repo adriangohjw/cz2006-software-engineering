@@ -94,3 +94,18 @@ def user_update_password_operation(username, current_password, new_password):
 
     # success case
     return user
+
+
+def auth_operation(username, password):
+
+    user = userRead(col='username', value=username)
+
+    # user is not found
+    if user is None:
+        raise ErrorWithCode(404, "No user found")
+
+    # if password is wrong
+    if authenticate(password, user.encrypted_password):
+        return True
+    else:
+        return False 

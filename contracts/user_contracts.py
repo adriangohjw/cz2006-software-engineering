@@ -182,3 +182,16 @@ def user_read_contract_byID(request):
     return {
         'id': int(id)
     }
+
+
+def auth_contract(request):
+    username = request.args.get('username')
+    password = request.args.get('password')
+
+    validate_username(username)
+    validate_password(password)
+
+    return {
+        'username': username,
+        'password': password
+    }

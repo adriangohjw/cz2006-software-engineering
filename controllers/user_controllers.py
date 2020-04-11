@@ -6,10 +6,11 @@ from exceptions import ErrorWithCode
 
 from contracts.user_contracts import \
     user_create_contract, user_read_contract, user_update_contract, user_update_password_contract, \
-    user_read_contract_byID
+    user_read_contract_byID, auth_contract
     
 from operations.user_operations import \
-    user_create_operation, user_read_operation, user_update_operation, user_update_password_operation
+    user_create_operation, user_read_operation, user_update_operation, user_update_password_operation,\
+    auth_operation
 
 
 class userAPI(Resource):
@@ -165,4 +166,36 @@ class userPasswordAPI(Resource):
         # success case
         return make_response(
             jsonify(user.asdict()), 200
+        )
+
+
+class AuthenticationAPI(Resource):
+
+    def get(self):
+
+        # contracts
+        try:
+            u = auth_contract(request)
+        except Exception as e:
+            return make_response(
+                jsonify (
+                    error = str(e),
+                ), 400
+            )
+
+        # operations
+        try:
+            user = auth_operation(
+                u['username'], u['password']
+            )
+        except ErrorWithCode as e:
+            return make_response(
+                jsonify (
+                    error = e.message
+                ), e.status_code
+            )
+        
+        # success case
+        return make_response(
+            jsonify (user.asdict()), 200
         )

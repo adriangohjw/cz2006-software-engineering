@@ -14,7 +14,7 @@ db.init_app(app)
 from contracts.user_contracts import \
     validate_id, validate_username, validate_password, validate_name, validate_age, validate_height, validate_weight, \
     user_read_contract, user_create_contract, user_update_contract, user_update_password_contract, \
-    user_read_contract_byID
+    user_read_contract_byID, auth_contract
 
 
 class Test_user_contracts(unittest.TestCase):
@@ -188,6 +188,24 @@ class Test_user_contracts(unittest.TestCase):
 
         with app.test_request_context('/?id=hello', method='GET'):
             self.assertRaises(TypeError, user_read_contract_byID, request)
+
+
+    def test_authContract(self):
+
+        with app.test_request_context('/?username=username&password=password', method='GET'):
+            self.assertEqual(
+                auth_contract(request), 
+                {
+                    'username': 'username',
+                    'password': 'password'
+                }
+            )
+
+        with app.test_request_context('/?username=username&password=', method='GET'):
+            self.assertRaises(ValueError, auth_contract, request)
+
+        with app.test_request_context('/?username=username', method='GET'):
+            self.assertRaises(TypeError, auth_contract, request)
         
 
 if __name__ == '__main__':
