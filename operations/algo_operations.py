@@ -20,12 +20,12 @@ from operations.point_operations import point_read_operation
 
 def routes_search_algo_operation(start, end, fit_level, weight, max_dist, cal):
     res = SearchResult(start, end, fit_level, weight, max_dist, cal)
-    return res.values.tolist()
+    return res.transpose().values.tolist()
 
 
 def popular_routes_algo_operation(weight):
     res = PopularRoutes(weight)
-    return res.values.tolist()
+    return res.transpose().values.tolist()
 
 
 def live_stats_algo_operation(route_id):

@@ -1,13 +1,12 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:location/location.dart' as loc;
-import 'package:search_map_place/search_map_place.dart';
-import 'Routez.dart';
 import 'package:google_maps_webservice/places.dart';
 
 import 'SearchResults.dart';
@@ -21,20 +20,23 @@ GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8");
 
 class _MyAppState extends State<Search> {
+  int userid = 1;//has to be extracted from previous file
+  
   BitmapDescriptor sourceicon;
   Completer<GoogleMapController> _controller = Completer();
-  // GoogleMapController mapController;
   String googleAPIKey = "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8";
    Set<Marker> _markers = Set<Marker>();
-  //int _count = 0;
   final LatLng _center = const LatLng(1.3483, 103.6831);
   double _value = 1;
   Prediction p;
+  int ispressed=0;
+  var startpoint,startlat,startlng;
+  var endpoint,endlat,endlng;
+  var SearchResults = [];
+  var searchAttr=[];
   TextEditingController _startloc = new TextEditingController();
   TextEditingController _endloc = new TextEditingController();
-  // void _onMapCreated(GoogleMapController controller) {
-  //   mapController = controller;
-  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +46,7 @@ class _MyAppState extends State<Search> {
         children: <Widget>[
           GoogleMap(
             myLocationEnabled: true,
+            myLocationButtonEnabled: false,
             markers: _markers,
             onMapCreated: onMapCreated,
             initialCameraPosition: CameraPosition(
@@ -119,14 +122,15 @@ class _MyAppState extends State<Search> {
                         textInputAction: TextInputAction.go,
                         controller: _endloc,
                         onTap: () async {
+                          ispressed=1;
                           Prediction p = await PlacesAutocomplete.show(
                               context: context,
                               apiKey: googleAPIKey,
                               language: "en",
                               components: [Component(Component.country, "sg")],
                               mode: Mode.overlay);
-                          _endloc.text = p.description;
-                          displayPrediction(p);
+                              _endloc.text = p.description;
+                              displayPrediction(p);
                         },
                         decoration: InputDecoration(
                             //border: OutlineInputBorder(),
@@ -216,9 +220,10 @@ class _MyAppState extends State<Search> {
                   child: Text('Find Routes',
                       style: TextStyle(color: Colors.white)),
                   splashColor: Colors.grey,
-                  onPressed: () {
+                  onPressed: () async {
+                    await getSearchResults();
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
+                      MaterialPageRoute(builder: (context) => MyHomePage(id: userid, routes:SearchResults, length: SearchResults[0].length, search: searchAttr,)),
                     );
                   }),
             ),
@@ -268,8 +273,34 @@ class _MyAppState extends State<Search> {
       ),
     ));
   }
-
-  Future<Null> displayPrediction(Prediction p) async {
+  getSearchResults() async {
+  var weight = 100; //default
+  
+  var response1 = await http.get('http://localhost:3333/users/id/?id='+userid.toString());
+  if (response1.statusCode==200)
+  {
+  weight = (json.decode(response1.body))['weight'];
+  } else{
+    throw Exception('Failed to load weight');
+  }
+  var url = 'http://localhost:3333/algo/routes_search/?startPos_lat='+startlat.toString()+'&startPos_long='+startlng.toString()+'&endPos_lat='+endlat.toString()+'&endPos_long='+endlng.toString()+'&fit_level='+_value.round().toString()+'&weight='+weight.toString();
+  
+  searchAttr.add(startlat.toString());
+  searchAttr.add(startlng.toString());
+  searchAttr.add(endlat.toString());
+  searchAttr.add(endlng.toString());
+  searchAttr.add(_value.round().toString());
+  searchAttr.add(weight.toString());
+  var response2 = await http.get(url);
+  if (response2.statusCode==200)
+  {
+  SearchResults = (json.decode(response2.body));  
+  } else{
+    throw Exception('Failed to load results');
+  }
+  }
+  Future displayPrediction(Prediction p) async {
+    final GoogleMapController controller = await _controller.future;
     if (p != null) {
       PlacesDetailsResponse detail =
           await _places.getDetailsByPlaceId(p.placeId);
@@ -277,13 +308,35 @@ class _MyAppState extends State<Search> {
       var placeId = p.placeId;
       double lat = detail.result.geometry.location.lat;
       double lng = detail.result.geometry.location.lng;
-      var startpoint=LatLng(lat,lng);
-
-    _markers.add(Marker(
-        markerId: MarkerId('sourcePin'),
+      
+      if(ispressed==0){
+        startpoint=LatLng(lat,lng);
+        startlat=lat;
+        startlng=lng;
+        setState(() {
+        _markers.add(Marker(
+        markerId: MarkerId('startpin'),
         position: startpoint,
         icon: sourceicon));
+       controller.animateCamera(CameraUpdate.newCameraPosition(
+       CameraPosition(target: startpoint, zoom: 15.0)));
+      });
+      }
+      else{
+        endpoint=LatLng(lat,lng);
+        endlat=lat;
+        endlng=lng;
+        setState(() {
+        _markers.add(Marker(
+        markerId: MarkerId('startpin'),
+        position: startpoint,
+        icon: sourceicon));
+       controller.animateCamera(CameraUpdate.newCameraPosition(
+       CameraPosition(target: startpoint, zoom: 15.0)));
+      });
+      }
 
+      
       var address = await Geocoder.local.findAddressesFromQuery(p.description);
       return (p.description);
     }

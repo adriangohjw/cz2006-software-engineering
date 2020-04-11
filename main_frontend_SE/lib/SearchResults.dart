@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bicycle/Routez.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(MyApp());
-}
+
+// void main() {
+//   runApp(MyApp());
+// }
 
 const double CAMERA_ZOOM = 12;
 const double CAMERA_TILT = 0;
@@ -15,21 +18,33 @@ const double CAMERA_BEARING = 30;
 //const LatLng DEST_LOCATION = LatLng(1.341454, 103.684035);
 //enum ElevationLevel { Uphill, Downhill, Balanced, Flat }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyHomePage(),
-    );
-    //State<StatefulWidget> createState() => RecommenderState();
-  }
-}
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: MyHomePage(),
+//     );
+//   }
+// }
 
 class MyHomePage extends StatefulWidget {
-  State<StatefulWidget> createState() => RecommenderState();
+  var routes;
+  int id;
+  int length;
+  var search;
+  MyHomePage({@required this.routes, @required this.id, @required this.length, @required this.search});
+  State<StatefulWidget> createState() => RecommenderState(UserID:id, searchOutput:routes, len:length, searchAttr: search);
 }
 
 class RecommenderState extends State<MyHomePage> {
+  var searchOutput;
+  int UserID;
+  int len;
+  var searchAttr;
+  RecommenderState({@required this.searchOutput, @required this.UserID, @required this.len, @required this.searchAttr});
+
+
+  var SearchResults = [];
   GoogleMapController mapController;
   List<Set> poly = [];
   List<Set> mark = [];
@@ -44,33 +59,9 @@ class RecommenderState extends State<MyHomePage> {
   double minCal;
   TextEditingController _textcontrollerdist = new TextEditingController();
   TextEditingController _textcontrollercalo = new TextEditingController();
-  // final routeDist = ['20KM', '30KM', '40KM', '50KM'];
-  //   final routeTime = ['200 Mins', '250 Mins', '300 Mins', '350 Mins'];
-  //   final routeCal = ['1000KCal', '2000KCal', '3000KCal', '4000KCal'];
-  //   final routeAsc = ['10Km', '20Km', '30Km', '40Km'];
-  //   final routeDesc = ['1Km', '2Km', '3Km', '4Km'];
-  //   final routeFlat = ['100Km', '200Km', '300Km', '400Km'];
-  //   final startLocs = [
-  //     LatLng(1.355435, 103.685172),
-  //     LatLng(1.344454, 103.686035),
-  //     LatLng(1.347454, 103.687035),
-  //     LatLng(1.350454, 103.688035)
-  //   ];
-  //   final endLocs = [
-  //     LatLng(1.341454, 103.684035),
-  //     LatLng(1.350454, 103.688035),
-  //     LatLng(1.344454, 103.686035),
-  //     LatLng(1.347454, 103.687035)
-  //   ];
-  //   final polyline = [
-  //     "awgG__zwR}@gBKa@MmACe@BeAP}@^cAh@cALM`@MAG@I@EFAF?D@pBgBnAaAhCoAlBo@zBg@jCa@pDHhILbIDrAIDIHGNBDF?DzAC`@BVFj@\\zB`CxAfBhApA|@hAf@x@Zt@DNNPl@x@nAvArEbGpBvC@@ID",
-  //     "aseGcezwRDo@Qs@OYMKc@Q[Gk@?a@F[LUPURUZYf@GX@f@BLgBTmACa@A}EEm@Im@SKv@M`@QVYX_@X_@JDNAFKJK@KCGK@IBIDEkAgAk@[i@WNg@?SSs@w@sAGSSWOMTg@Ni@Jo@a@S@s@",
-  //     "wefGgizwRRl@{@Cw@CY@o@J]XQXSr@l@Rl@H|EDnBDfBUCMAg@FYXg@T[TSTQZM`@Gj@?ZFb@PLJNXPr@En@",
-  //     "_zfGaqzwRAr@`@RKn@Oh@Uf@NLRVFRv@rARr@?ROf@h@Vj@Z^Zj@j@HCPF^K^YXYPWLa@Jw@Rs@PY\\Yn@KXARe@jA?"
-  //   ];
+    
   @override
   Widget build(BuildContext context) {
-    final routeDist = ['20KM', '30KM', '40KM', '50KM'];
     
 
     return Scaffold(
@@ -225,8 +216,13 @@ class RecommenderState extends State<MyHomePage> {
                         Icons.done,
                         size: 50,
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        var SearchResultsLat = await getSearchResults();
+                        print("YYYYYYYYYYYYEEEEEEEEEEEEEHHHHHHHHHHHHHHHHAAAAAAAAAAAAAAAAAWWWWWWWWWWWWWWWWW!!!!!!!!!!");
+                        print(SearchResultsLat[1]);
+                        Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => MyHomePage(id: UserID, routes:SearchResultsLat, length: SearchResultsLat[0].length, search: searchAttr,)),
+                    );
                       },
                     ),
                   ),
@@ -261,7 +257,7 @@ class RecommenderState extends State<MyHomePage> {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: <Widget>[
-                    for (var i = 0; i < routeDist.length; i++)
+                    for (var i = 0; i < len; i++)
                       _mapfunc(context, i)
                   ],
                 ),
@@ -278,32 +274,15 @@ class RecommenderState extends State<MyHomePage> {
   }
 
   Widget _mapfunc(BuildContext context, int index) {
-    
-    final routeDist = ['20KM', '30KM', '40KM', '50KM'];
-    final routeTime = ['200 Mins', '250 Mins', '300 Mins', '350 Mins'];
-    final routeCal = ['1000KCal', '2000KCal', '3000KCal', '4000KCal'];
-    final routeAsc = ['10Km', '20Km', '30Km', '40Km'];
-    final routeDesc = ['1Km', '2Km', '3Km', '4Km'];
-    final routeFlat = ['100Km', '200Km', '300Km', '400Km'];
-    final startLocs = [
-      LatLng(1.355435, 103.685172),
-      LatLng(1.344454, 103.686035),
-      LatLng(1.347454, 103.687035),
-      LatLng(1.350454, 103.688035)
-    ];
-    final endLocs = [
-      LatLng(1.341454, 103.684035),
-      LatLng(1.350454, 103.688035),
-      LatLng(1.344454, 103.686035),
-      LatLng(1.347454, 103.687035)
-    ];
-    final polyline = [
-      "awgG__zwR}@gBKa@MmACe@BeAP}@^cAh@cALM`@MAG@I@EFAF?D@pBgBnAaAhCoAlBo@zBg@jCa@pDHhILbIDrAIDIHGNBDF?DzAC`@BVFj@\\zB`CxAfBhApA|@hAf@x@Zt@DNNPl@x@nAvArEbGpBvC@@ID",
-      "aseGcezwRDo@Qs@OYMKc@Q[Gk@?a@F[LUPURUZYf@GX@f@BLgBTmACa@A}EEm@Im@SKv@M`@QVYX_@X_@JDNAFKJK@KCGK@IBIDEkAgAk@[i@WNg@?SSs@w@sAGSSWOMTg@Ni@Jo@a@S@s@",
-      "wefGgizwRRl@{@Cw@CY@o@J]XQXSr@l@Rl@H|EDnBDfBUCMAg@FYXg@T[TSTQZM`@Gj@?ZFb@PLJNXPr@En@",
-      "_zfGaqzwRAr@`@RKn@Oh@Uf@NLRVFRv@rARr@?ROf@h@Vj@Z^Zj@j@HCPF^K^YXYPWLa@Jw@Rs@PY\\Yn@KXARe@jA?"
-    ];
-
+    final polyline = searchOutput[9];
+    final routeAsc = searchOutput[1];
+    final routeDesc = searchOutput[2];
+    final routeFlat = searchOutput[3];
+    final routeDist = searchOutput[4];
+    final routeTime = searchOutput[7];
+    final routeCal = searchOutput[8];
+    final startLocs = List<LatLng>.filled(len, LatLng(searchOutput[0][0]['legs'][0]["start_location"]['lat'], searchOutput[0][0]['legs'][0]["start_location"]['lng']));
+    final endLocs = List<LatLng>.filled(len, LatLng(searchOutput[0][0]['legs'][0]["end_location"]['lat'], searchOutput[0][0]['legs'][0]["end_location"]['lng']));
     setMapPins(startLocs[index], endLocs[index]);
     setPolylines(polyline[index], [],PolylinePoints());
 
@@ -318,8 +297,17 @@ class RecommenderState extends State<MyHomePage> {
         borderRadius: BorderRadius.circular(20),
         splashColor: Colors.blue.withAlpha(30),
         onTap: () {
+          var routeDet = [];
+          routeDet.add(searchOutput[0][index]);
+          routeDet.add(routeDist[index].toStringAsFixed(1));
+          routeDet.add(routeTime[index].round().toString());
+          routeDet.add(routeCal[index].round().toString());
+          routeDet.add(routeAsc[index].toStringAsFixed(1));
+          routeDet.add(routeDesc[index].toStringAsFixed(1));
+          routeDet.add(routeFlat[index].toStringAsFixed(1));
+          routeDet.add(polyline[index]);
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Routez()),
+            MaterialPageRoute(builder: (context) => Routez(id: UserID, route: routeDet)),
           );
         },
         child: Container(
@@ -354,7 +342,7 @@ class RecommenderState extends State<MyHomePage> {
                           zoom: CAMERA_ZOOM,
                           bearing: CAMERA_BEARING,
                           tilt: CAMERA_TILT,
-                          target: SOURCE_LOCATION),
+                          target: LatLng(searchOutput[0][0]['legs'][0]["end_location"]['lat'], searchOutput[0][0]['legs'][0]["end_location"]['lng'])),
                       onMapCreated: (controller) {
                         setState(() {
                           mapController = controller;
@@ -398,7 +386,7 @@ class RecommenderState extends State<MyHomePage> {
                             alignment: Alignment.center,
                             child: Text(
                               routeDist[
-                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                                  index].toStringAsFixed(1)+' Km', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -417,7 +405,7 @@ class RecommenderState extends State<MyHomePage> {
                             alignment: Alignment.center,
                             child: Text(
                               routeTime[
-                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                                  index].round().toString()+' Mins', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -436,7 +424,7 @@ class RecommenderState extends State<MyHomePage> {
                             alignment: Alignment.center,
                             child: Text(
                               routeCal[
-                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                                  index].round().toString()+' KCal', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -459,7 +447,7 @@ class RecommenderState extends State<MyHomePage> {
                             alignment: Alignment.center,
                             child: Text(
                               routeAsc[
-                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                                  index].toStringAsFixed(1)+' Km', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -478,7 +466,7 @@ class RecommenderState extends State<MyHomePage> {
                             alignment: Alignment.center,
                             child: Text(
                               routeDesc[
-                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                                  index].toStringAsFixed(1)+' Km', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -497,7 +485,7 @@ class RecommenderState extends State<MyHomePage> {
                             alignment: Alignment.center,
                             child: Text(
                               routeFlat[
-                                  index], // this is a random value. original value must be extracted from database / route detail and replaced here
+                                  index].toStringAsFixed(1)+' Km', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -533,7 +521,44 @@ class RecommenderState extends State<MyHomePage> {
     }
   );
 }
+  getSearchResults() async {
+  var weight = 100; //default
+  
+  var response1 = await http.get('http://localhost:3333/users/id/?id='+UserID.toString());
+  if (response1.statusCode==200)
+  {
+  weight = (json.decode(response1.body))['weight'];
+  } else{
+    throw Exception('Failed to load weight');
+  }
+  var url = 'http://localhost:3333/algo/routes_search/?startPos_lat='+searchAttr[0]+'&startPos_long='+searchAttr[1]+'&endPos_lat='+searchAttr[2]+'&endPos_long='+searchAttr[3]+'&fit_level='+searchAttr[4]+'&weight='+searchAttr[5];
+  searchAttr.add(searchAttr[0]);
+  searchAttr.add(searchAttr[1]);
+  searchAttr.add(searchAttr[2]);
+  searchAttr.add(searchAttr[3]);
+  searchAttr.add(searchAttr[4]);
+  searchAttr.add(searchAttr[5]);
+  if ((maxDist)!=null) {
+      url = url+'&max_dist='+maxDist.round().toString();
+  }
+  if ((minCal)!=null) {
+      url = url+'&cal='+minCal.round().toString();
+  }
 
+  var response3 = await http.get(url);
+
+
+
+  if (response3.statusCode==200)
+  {
+  var UpdatedSearchResults = (json.decode(response3.body));
+  print(UpdatedSearchResults[2]); 
+  return UpdatedSearchResults; 
+  } else{
+    throw Exception('Failed to load results');
+  }
+  }
+  
   setPolylines(String pol, List<LatLng> polylineCoordinates, PolylinePoints polylinePoints) async {
     // List<PointLatLng> result = await polylinePoints?.getRouteBetweenCoordinates(
         //     googleAPIKey,

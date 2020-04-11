@@ -103,6 +103,10 @@ def SearchResult(start, end, fit_level, weight, max_dist=None, cal=None):
                 drop.append(i)
         df.drop(drop, inplace=True)
     df.index = np.arange(len(df))
+    polyline = []
+    for i in range(len(df)):
+        polyline.append(df['Route'][i]['overview_polyline']['points'])
+    df['polyline']=polyline
     df1 = df[df["FitLevel"] == fit_level]
 
     if (df1.shape[0] == 0):

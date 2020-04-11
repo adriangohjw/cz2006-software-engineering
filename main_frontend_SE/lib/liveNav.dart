@@ -1,7 +1,4 @@
-
-
 import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
@@ -13,19 +10,23 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 const double CAMERA_ZOOM = 16;
 const double CAMERA_TILT = 60;
 const double CAMERA_BEARING = 30;
-const LatLng SOURCE_LOCATION = LatLng(1.352902, 103.682764);
-const LatLng DEST_LOCATION = LatLng(1.341454, 103.684035);
 
 class LiveNav extends StatefulWidget {
+  int id;
+  var route;
+  LiveNav({@required this.id, @required this.route});
   @override
-  State<StatefulWidget> createState() => MapPageState();
+  State<StatefulWidget> createState() => MapPageState(UserID:id, routeDet: route);
 }
 
 class MapPageState extends State<LiveNav> {
+  int UserID;
+  var routeDet;
+  MapPageState({@required this.UserID, @required this.routeDet});
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = Set<Marker>();
 // for my drawn routes on the map
-  Set<Polyline> _polylines = Set<Polyline>();
+  Set<Polyline> _polylines = {};
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints;
   String googleAPIKey = "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8";
@@ -70,9 +71,9 @@ class MapPageState extends State<LiveNav> {
       // current user's position in real time,
       // so we're holding on to it
       currentLocation = cLoc;
-
-
+      updatePinOnMap();
     });
+     
     // set custom marker pins
     setSourceAndDestinationIcons();
     // set the initial location
@@ -114,8 +115,8 @@ class MapPageState extends State<LiveNav> {
 
     // hard-coded destination for this example
     destinationLocation = LocationData.fromMap({
-      "latitude": DEST_LOCATION.latitude,
-      "longitude": DEST_LOCATION.longitude
+      "latitude": LatLng(routeDet[0]['legs'][0]["end_location"]['lat'], routeDet[0]['legs'][0]["end_location"]['lng']).latitude,
+      "longitude": LatLng(routeDet[0]['legs'][0]["end_location"]['lat'], routeDet[0]['legs'][0]["end_location"]['lng']).longitude
     });
   }
 
@@ -125,7 +126,7 @@ class MapPageState extends State<LiveNav> {
         zoom: CAMERA_ZOOM,
         tilt: CAMERA_TILT,
         bearing: CAMERA_BEARING,
-        target: SOURCE_LOCATION);
+        target: LatLng(routeDet[0]['legs'][0]["start_location"]['lat'], routeDet[0]['legs'][0]["start_location"]['lng']));
     if (currentLocation != null) { 
       initialCameraPosition = CameraPosition(
           target: LatLng(currentLocation.latitude, currentLocation.longitude),
@@ -362,6 +363,7 @@ class MapPageState extends State<LiveNav> {
                   // my map has completed being created;
                   // i'm ready to show the pins on the map
                   showPinsOnMap();
+                  setPolylines();
                 }),
             Column(
               children: <Widget>[
@@ -503,6 +505,8 @@ class MapPageState extends State<LiveNav> {
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -515,20 +519,17 @@ class MapPageState extends State<LiveNav> {
     // get a LatLng for the source location
     // from the LocationData currentLocation object
     var pinPosition =
-        LatLng(SOURCE_LOCATION.latitude, SOURCE_LOCATION.longitude);
+        LatLng(routeDet[0]['legs'][0]["start_location"]['lat'], routeDet[0]['legs'][0]["start_location"]['lng']);
     // get a LatLng out of the LocationData object
-    var destPosition = LatLng(DEST_LOCATION.latitude, DEST_LOCATION.longitude);
+    var destPosition = LatLng(routeDet[0]['legs'][0]["end_location"]['lat'], routeDet[0]['legs'][0]["end_location"]['lng']);
 
     // add the initial source location pin
-    _markers.add(Marker(
-        markerId: MarkerId(''),
-        position: pinPosition,
-        icon: currentlocationIcon));
+   
 
     _markers.add(Marker(
         markerId: MarkerId('sourcePin'),
         position: pinPosition,
-        icon: currentlocationIcon));
+        icon: sourceIcon));
 
     // destination pin
     _markers.add(Marker(
@@ -537,37 +538,39 @@ class MapPageState extends State<LiveNav> {
         icon: destinationIcon));
     // set the route lines on the map from source to destination
     // for more info follow this tutorial
-    //setPolylines();
   }
 
-  void setPolylines() async {
-    List<PointLatLng> result = await polylinePoints.getRouteBetweenCoordinates(
-        googleAPIKey,
-        SOURCE_LOCATION.latitude,
-        SOURCE_LOCATION.longitude,
-        DEST_LOCATION.latitude,
-        DEST_LOCATION.longitude);
-    print("RESULT: $result");
-    if (result.isNotEmpty) {
-      result.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
+setPolylines() async {
+
+        // List<PointLatLng> result = await polylinePoints?.getRouteBetweenCoordinates(
+        //     googleAPIKey,
+        //     SOURCE_LOCATION.latitude,
+        //     SOURCE_LOCATION.longitude,
+        //     DEST_LOCATION.latitude,
+        //     DEST_LOCATION.longitude);
+        List<PointLatLng> result = polylinePoints.decodePolyline(routeDet[7]);
+        print(result);
+        if (result.isNotEmpty) {
+          // loop through all PointLatLng points and convert them
+          // to a list of LatLng, required by the Polyline
+          result.forEach((PointLatLng point) {
+            polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+          });
+        }
 
       setState(() {
-        // create a Polyline instance
-        // with an id, an RGB color and the list of LatLng pairs
-        Polyline polyline = Polyline(
-            polylineId: PolylineId("poly"),
-            color: Color.fromARGB(255, 40, 122, 198),
-            points: polylineCoordinates);
+          // create a Polyline instance
+          // with an id, an RGB color and the list of LatLng pairs
+          Polyline polyline = Polyline(
+              polylineId: PolylineId("poly"),
+              color: Color.fromARGB(255, 40, 122, 198),
+              points: polylineCoordinates);
 
-        // add the constructed polyline as a set of points
-        // to the polyline set, which will eventually
-        // end up showing up on the map
-        _polylines.add(polyline);
+          // add the constructed polyline as a set of points
+          // to the polyline set, which will eventually
+          // end up showing up on the map
+          _polylines.add(polyline);
       });
-    }
-    print("Polylines: $_polylines");
   }
 
   void updatePinOnMap() async {
@@ -590,9 +593,9 @@ class MapPageState extends State<LiveNav> {
 
       // the trick is to remove the marker (by id)
       // and add it again at the updated location
-      _markers.removeWhere((m) => m.markerId.value == 'sourcePin');
+     // _markers.removeWhere((m) => m.markerId.value == 'sourcePin');
       _markers.add(Marker(
-          markerId: MarkerId('sourcePin'),
+          markerId: MarkerId('curpin'),
           position: pinPosition, // updated position
           icon: currentlocationIcon));
     });

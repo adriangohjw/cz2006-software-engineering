@@ -41,9 +41,6 @@ def validate_maxDist(max_dist):
     if not max_dist: 
         raise ValueError("max_dist is empty")
 
-    # if not integer
-    if not isinstance(max_dist, int):
-        raise TypeError("max_dist is not integer")
         
         
 def validate_calories(cal):
@@ -68,7 +65,7 @@ def routes_search_algo_contracts(request):
     endPos_long = request.args.get('endPos_long', type=float)
     fit_level = request.args.get('fit_level')
     weight = request.args.get('weight', type=int)
-    max_dist = request.args.get('max_dist', type=int) 
+    max_dist = request.args.get('max_dist', type=float) 
     cal = request.args.get('cal', type=int) 
     
     validate_latitude(startPos_lat)
@@ -87,7 +84,7 @@ def routes_search_algo_contracts(request):
         'end': str(endPos_lat) + ', ' + str(endPos_long),
         'fit_level': int(fit_level),
         'weight': int(weight),
-        'max_dist': int(max_dist) if max_dist is not None else max_dist,
+        'max_dist': float(max_dist) if max_dist is not None else max_dist,
         'cal': int(cal) if cal is not None else cal
     }
 

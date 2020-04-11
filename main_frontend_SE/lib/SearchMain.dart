@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:location/location.dart' as loc;
 import 'package:search_map_place/search_map_place.dart';
 import 'Routez.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -18,17 +21,20 @@ GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8");
 
 class _MyAppState extends State<Search> {
-  GoogleMapController mapController;
+  BitmapDescriptor sourceicon;
+  Completer<GoogleMapController> _controller = Completer();
+  // GoogleMapController mapController;
   String googleAPIKey = "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8";
+   Set<Marker> _markers = Set<Marker>();
   //int _count = 0;
   final LatLng _center = const LatLng(1.3483, 103.6831);
   double _value = 1;
   Prediction p;
   TextEditingController _startloc = new TextEditingController();
   TextEditingController _endloc = new TextEditingController();
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
+  // void _onMapCreated(GoogleMapController controller) {
+  //   mapController = controller;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +43,13 @@ class _MyAppState extends State<Search> {
       body: Stack(
         children: <Widget>[
           GoogleMap(
-            onMapCreated: _onMapCreated,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            markers: _markers,
+            onMapCreated: onMapCreated,
             initialCameraPosition: CameraPosition(
               target: _center,
-              zoom: 15.0,
+              zoom: 12.0,
             ),
           ),
           Column(children: <Widget>[
@@ -124,7 +133,7 @@ class _MyAppState extends State<Search> {
                             //border: OutlineInputBorder(),
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 20),
-                            labelText: "End Location (optional)..."),
+                            labelText: "End Location..."),
                       ),
                     ),
                   ),
@@ -214,10 +223,51 @@ class _MyAppState extends State<Search> {
                     );
                   }),
             ),
+            
+            Container(
+              margin: EdgeInsets.only(top: 80),
+              child: Row(
+              children: <Widget>[
+                Spacer(flex:9),
+                FloatingActionButton(
+                  heroTag: null,
+                  child: Icon(Icons.my_location),
+                  onPressed: () {_currentLocation();},
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.blue,
+                ), 
+                Spacer(),
+              ],
+            ),
+          ),
           ])
         ],
       ),
     );
+  }
+
+  void onMapCreated(GoogleMapController controller) {
+      //controller.setMapStyle(Utils.mapStyles);
+      _controller.complete(controller);
+    }
+
+  void _currentLocation() async {
+   final GoogleMapController controller = await _controller.future;
+   loc.LocationData currentLocation;
+   var location = new loc.Location();
+   try {
+     currentLocation = await location.getLocation();
+     } on Exception {
+       currentLocation = null;
+       }
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        bearing: 0,
+        target: LatLng(currentLocation.latitude, currentLocation.longitude),
+        zoom: 17.0,
+      ),
+    ));
   }
 
   Future<Null> displayPrediction(Prediction p) async {
@@ -228,6 +278,12 @@ class _MyAppState extends State<Search> {
       var placeId = p.placeId;
       double lat = detail.result.geometry.location.lat;
       double lng = detail.result.geometry.location.lng;
+      var startpoint=LatLng(lat,lng);
+
+    _markers.add(Marker(
+        markerId: MarkerId('sourcePin'),
+        position: startpoint,
+        icon: sourceicon));
 
       var address = await Geocoder.local.findAddressesFromQuery(p.description);
       return (p.description);

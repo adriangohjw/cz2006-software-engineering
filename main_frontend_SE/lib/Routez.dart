@@ -7,23 +7,23 @@ import 'liveNav.dart';
 import 'package:location/location.dart';
 
 class Routez extends StatefulWidget {
+  int id;
+  var route;
+  Routez({@required this.id, @required this.route});
   @override
-  _MapPageState createState() => _MapPageState();
+  _MapPageState createState() => _MapPageState(UserID:id, routeDet: route);
 }
 
 
 const double CAMERA_ZOOM = 15;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
-const LatLng SOURCE_LOCATION = LatLng(1.355435, 103.685172);
-const LatLng DEST_LOCATION = LatLng(1.341454, 103.684035);
-double centerlat = (SOURCE_LOCATION.latitude+DEST_LOCATION.latitude)/2;
-double centerlong =(SOURCE_LOCATION.longitude+DEST_LOCATION.longitude)/2;
-double centerlongg = centerlong - 1;
-LatLng centerLoc = new LatLng(centerlat, centerlong);
 
 
 class _MapPageState extends State<Routez> {
+  int UserID;
+  var routeDet;
+  _MapPageState({@required this.UserID, @required this.routeDet});
     Completer<GoogleMapController> _controller = Completer();
     Set<Marker> _markers = {};
     Set<Polyline> _polylines = {};
@@ -35,9 +35,6 @@ class _MapPageState extends State<Routez> {
 
     @override
     Widget build(BuildContext context) {
-      print(centerLoc);
-      print(centerlat);
-      print(centerlongg);
       return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
@@ -53,7 +50,7 @@ class _MapPageState extends State<Routez> {
                                       zoom: CAMERA_ZOOM,
                                       bearing: CAMERA_BEARING,
                                       tilt: CAMERA_TILT,
-                                      target: DEST_LOCATION,),
+                                      target: LatLng(routeDet[0]['legs'][0]["end_location"]['lat'], routeDet[0]['legs'][0]["end_location"]['lng']),),
 
             onMapCreated: onMapCreated),
 
@@ -93,15 +90,8 @@ class _MapPageState extends State<Routez> {
           Spacer(),
           Container(child: Row(
               children: <Widget>[
-                Spacer(),
-                FloatingActionButton(
-                  heroTag: null,
-                  child: Icon(Icons.favorite_border),
-                  backgroundColor: Colors.white,
-                  onPressed: () {},
-                  foregroundColor: Colors.red,
-                ),
-                Spacer(flex:8),
+                
+                Spacer(flex:9),
                 Container(
                 child: CupertinoButton(
                   child: Text("START"),
@@ -109,7 +99,7 @@ class _MapPageState extends State<Routez> {
                   onPressed:(){Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) =>
-              LiveNav()),
+              LiveNav(id: UserID, route: routeDet,)),
         );}
                     //_onButtonPressedf
                   ,
@@ -153,12 +143,12 @@ class _MapPageState extends State<Routez> {
         // source pin
         _markers.add(Marker(
             markerId: MarkerId('sourcePin'),
-            position: SOURCE_LOCATION,
+            position: LatLng(routeDet[0]['legs'][0]["start_location"]['lat'], routeDet[0]['legs'][0]["start_location"]['lng']),
             icon: sourceIcon));
         // destination pin
         _markers.add(Marker(
             markerId: MarkerId('destPin'),
-            position: DEST_LOCATION,
+            position: LatLng(routeDet[0]['legs'][0]["end_location"]['lat'], routeDet[0]['legs'][0]["end_location"]['lng']),
             icon: destinationIcon));
       });
     }
@@ -171,7 +161,7 @@ class _MapPageState extends State<Routez> {
         //     SOURCE_LOCATION.longitude,
         //     DEST_LOCATION.latitude,
         //     DEST_LOCATION.longitude);
-        List<PointLatLng> result = polylinePoints.decodePolyline("wbfGcwxwRFhAZ?b@?XAn@Iz@CrD@f@Cb@GbEqAd@Kb@CvDU~AGlB@hBFd@CNETKX[rA{AFIVg@DWD_ACiCOkBKq@Uy@m@{AcBuCkByBID");
+        List<PointLatLng> result = polylinePoints.decodePolyline(routeDet[7]);
         print(result);
         if (result.isNotEmpty) {
           // loop through all PointLatLng points and convert them

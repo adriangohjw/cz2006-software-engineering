@@ -30,7 +30,7 @@ class MapPageState extends State<LiveNav> {
   PolylinePoints polylinePoints;
   String googleAPIKey = "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8";
 // for my custom marker pins
-  BitmapDescriptor sourceIcon;
+  BitmapDescriptor currentlocationIcon,sourceIcon;
   BitmapDescriptor destinationIcon;
 // the user's initial location and current location
 // as it moves
@@ -39,10 +39,13 @@ class MapPageState extends State<LiveNav> {
   LocationData destinationLocation;
 // wrapper around the location API
   Location location;
-  String speed="0.0";
-  int timeinhrs=0;
+  double speed=0.0;
+  String displayspeed="0.0";
+  double timeinhrs=0.0;
   int ispressed=0,weight=100;
   double distance=0;
+  String displaydistance='0.0';
+  BitmapDescriptor currentlocationicon ;
   var swatch=new Stopwatch();
   var speedList=new List();
   double met;
@@ -58,6 +61,8 @@ class MapPageState extends State<LiveNav> {
 
     polylinePoints = PolylinePoints();
 
+    showPinsOnMap();
+
     // subscribe to changes in the user's location
     // by "listening" to the location's onLocationChanged event
     location.onLocationChanged.listen((LocationData cLoc) {
@@ -66,10 +71,10 @@ class MapPageState extends State<LiveNav> {
       // so we're holding on to it
       currentLocation = cLoc;
 
-      updatePinOnMap();
+
     });
     // set custom marker pins
-    //setSourceAndDestinationIcons();
+    setSourceAndDestinationIcons();
     // set the initial location
    
     setInitialLocation();
@@ -81,12 +86,8 @@ class MapPageState extends State<LiveNav> {
   }
 
   void setSourceAndDestinationIcons() async {
-    sourceIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5), 'assets/driving_pin.png');
-
-    destinationIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/destination_map_marker.png');
+    currentlocationIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5), 'assets/biking.png');
   }
 
   void setInitialLocation() async {
@@ -125,7 +126,7 @@ class MapPageState extends State<LiveNav> {
         tilt: CAMERA_TILT,
         bearing: CAMERA_BEARING,
         target: SOURCE_LOCATION);
-    if (currentLocation != null) {
+    if (currentLocation != null) { 
       initialCameraPosition = CameraPosition(
           target: LatLng(currentLocation.latitude, currentLocation.longitude),
           zoom: CAMERA_ZOOM,
@@ -153,7 +154,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "$distance", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displaydistance", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -241,7 +242,7 @@ class MapPageState extends State<LiveNav> {
                       alignment: Alignment.centerLeft,
                       padding: EdgeInsets.only(left: 30),
                       child: Text(
-                        "$speed", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displayspeed", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontSize: 25,
                         ),
@@ -391,7 +392,8 @@ class MapPageState extends State<LiveNav> {
                     FloatingActionButton(
                       heroTag: null,
                       child: Icon(Icons.my_location),
-                      onPressed: () {_currentLocation();},
+                      onPressed: () {_currentLocation();
+                      updatePinOnMap();},
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.blue,
                     ),
@@ -426,7 +428,8 @@ class MapPageState extends State<LiveNav> {
                     FloatingActionButton(
                       heroTag: null,
                       child: Icon(Icons.stop),
-                      onPressed: _showTravelSummary,
+                      onPressed:(){ _showTravelSummary();
+                      ispressed=1;},
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                     ),
@@ -458,19 +461,19 @@ class MapPageState extends State<LiveNav> {
               Row(
               children: <Widget>[
                 new Text('Distance covered: '),
-                new Text('30 Km')
+                new Text('$distance')
                 ],
               ),
               Row(
               children: <Widget>[
                 new Text('Total Time Travelled: '),
-                new Text('120 Min')
+                new Text('$timeinhrs')
                 ],
               ),
               Row(
               children: <Widget>[
                 new Text('Total Calories Burnt: '),
-                new Text('30 Km')
+                new Text('$cal')
                 ],
               ),
               Row(
@@ -520,12 +523,12 @@ class MapPageState extends State<LiveNav> {
     _markers.add(Marker(
         markerId: MarkerId(''),
         position: pinPosition,
-        icon: sourceIcon));
+        icon: currentlocationIcon));
 
     _markers.add(Marker(
         markerId: MarkerId('sourcePin'),
         position: pinPosition,
-        icon: sourceIcon));
+        icon: currentlocationIcon));
 
     // destination pin
     _markers.add(Marker(
@@ -534,7 +537,7 @@ class MapPageState extends State<LiveNav> {
         icon: destinationIcon));
     // set the route lines on the map from source to destination
     // for more info follow this tutorial
-    setPolylines();
+    //setPolylines();
   }
 
   void setPolylines() async {
@@ -591,7 +594,7 @@ class MapPageState extends State<LiveNav> {
       _markers.add(Marker(
           markerId: MarkerId('sourcePin'),
           position: pinPosition, // updated position
-          icon: sourceIcon));
+          icon: currentlocationIcon));
     });
   }
 void _currentLocation() async {
@@ -617,8 +620,12 @@ void _currentLocation() async {
     location.onLocationChanged.listen((LocationData value) {
       setState(() {
         currentLocation = value;
-        speed=num.parse((currentLocation.speed*(5/18)).toStringAsFixed(1)).toString()  ;
-        distance+=(double.parse(speed)*(timeinhrs/3600));
+        speed=(currentLocation.speed*(5/18))  ;
+        displayspeed=speed.toStringAsFixed(2).toString();
+        distance+=(speed*timeinhrs);
+        displaydistance=distance.toStringAsFixed(2);
+
+
         speedList.add(speed);
         calorieCalculator(speed);
 
@@ -639,7 +646,7 @@ void _currentLocation() async {
     }
     setState(() {
     stoptimetodisplay=swatch.elapsed.inMinutes.toString().padLeft(2,"0")+":"+(swatch.elapsed.inSeconds%60).toString().padLeft(2,"0");
-    timeinhrs=swatch.elapsed.inSeconds;
+    timeinhrs=(swatch.elapsed.inSeconds)/3600;
     });
   }
   void stoptime(){
