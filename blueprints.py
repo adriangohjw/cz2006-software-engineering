@@ -9,6 +9,7 @@ api_user = Api(user_bp)
 api_user.add_resource(user_controllers.userAPI, '/')
 api_user.add_resource(user_controllers.userAPI_byID, '/id/')
 api_user.add_resource(user_controllers.userPasswordAPI, '/password/')
+api_user.add_resource(user_controllers.AuthenticationAPI, '/auth/')
 
 route_bp = Blueprint('route', __name__)
 api_route = Api(route_bp)
