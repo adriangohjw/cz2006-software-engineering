@@ -98,14 +98,4 @@ def popular_routes_algo_contracts(request):
     return {
         'weight': int(weight)
     }
-    
 
-def live_stats_algo_contracts(request):
-
-    route_id = request.args.get('route_id', type=int)
-
-    validate_route_id(route_id)
-
-    return {
-        'route_id': int(route_id)
-    }

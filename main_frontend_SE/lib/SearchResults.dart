@@ -220,6 +220,7 @@ class RecommenderState extends State<MyRecommPage> {
     final routeDist = searchOutput[4];
     final routeTime = searchOutput[7];
     final routeCal = searchOutput[8];
+    final routeElevDetails = searchOutput[10];
     final startLocs = List<LatLng>.filled(len, LatLng(searchOutput[0][0]['legs'][0]["start_location"]['lat'], searchOutput[0][0]['legs'][0]["start_location"]['lng']));
     final endLocs = List<LatLng>.filled(len, LatLng(searchOutput[0][0]['legs'][0]["end_location"]['lat'], searchOutput[0][0]['legs'][0]["end_location"]['lng']));
     setMapPins(startLocs[index], endLocs[index]);
@@ -245,6 +246,7 @@ class RecommenderState extends State<MyRecommPage> {
           routeDet.add(routeDesc[index].toStringAsFixed(1));
           routeDet.add(routeFlat[index].toStringAsFixed(1));
           routeDet.add(polyline[index]);
+          routeDet.add(routeElevDetails[index]);
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => Routez(id: UserID, route: routeDet)),
           );

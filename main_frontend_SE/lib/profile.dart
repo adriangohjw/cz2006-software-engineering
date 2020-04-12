@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.bold))),
               Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Text("@"+details[0],
+                  child: Text("@"+details[0].toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Poppins",
@@ -147,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.bold))),
               Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Text(details[1],
+                  child: Text(details[1].toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Poppins",
@@ -160,6 +160,47 @@ class _ProfilePageState extends State<ProfilePage> {
             width: 1000,
             color: Colors.grey,
             margin: const EdgeInsets.only(bottom: 20.0, top: 10.0),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              RaisedButton(
+                // Statistics
+                onPressed: () {Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => NetStats()),
+                    );},
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    'Statistics',
+                    style: TextStyle(fontSize: 25, color: Colors.black),
+                  ),
+                ),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40)),
+              ),
+              RaisedButton(
+                // Saved Rides
+                onPressed: () {Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => SavedMap()),
+                    );},
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    'Saved Rides',
+                    style: TextStyle(fontSize: 25, color: Colors.black),
+                    
+                    
+                  ),
+                ),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40)),
+              ),
+            ],
           ),
           
           new Container(
@@ -182,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.bold))),
               Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Text(details[2],
+                  child: Text(details[2].toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Poppins",
@@ -210,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.bold))),
               Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Text(details[3],
+                  child: Text(details[3].toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Poppins",
@@ -238,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.bold))),
               Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Text(details[4],
+                  child: Text(details[4].toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Poppins",

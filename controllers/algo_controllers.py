@@ -5,10 +5,10 @@ from flask.helpers import make_response
 from exceptions import ErrorWithCode
 
 from contracts.algo_contracts import \
-    routes_search_algo_contracts, popular_routes_algo_contracts, live_stats_algo_contracts
+    routes_search_algo_contracts, popular_routes_algo_contracts
 
 from operations.algo_operations import \
-    routes_search_algo_operation, popular_routes_algo_operation, live_stats_algo_operation
+    routes_search_algo_operation, popular_routes_algo_operation
 
 
 class RoutesSearchAlgoAPI(Resource):
@@ -75,35 +75,3 @@ class PopularRoutesAlgoAPI(Resource):
         )
 
 
-class LiveStatsAlgoAPI(Resource):
-
-    def get(self):
-
-        # contracts
-        try:
-            r = live_stats_algo_contracts(request)
-        except Exception as e:
-            return make_response(
-                jsonify (
-                    error = str(e),
-                ), 400
-            )
-
-        # operations
-        try:
-            stats = live_stats_algo_operation(
-                r['route_id']
-            )
-        except ErrorWithCode as e:
-            return make_response(
-                jsonify (
-                    error = e.message
-                ), e.status_code
-            )
-        
-        # success case
-        return make_response(
-            jsonify (
-                points = stats
-            ), 200
-        )

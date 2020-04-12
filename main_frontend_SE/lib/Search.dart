@@ -1,5 +1,4 @@
 import 'dart:async';
-import'main.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -125,8 +124,7 @@ class _MyAppState extends State<Search> {
                         textInputAction: TextInputAction.go,
                         controller: _endloc,
                         onTap: () async {
-                          ispressed=1;
-                          Prediction p = await PlacesAutocomplete.show(
+                              Prediction p = await PlacesAutocomplete.show(
                               context: context,
                               apiKey: googleAPIKey,
                               language: "en",
@@ -134,6 +132,9 @@ class _MyAppState extends State<Search> {
                               mode: Mode.overlay);
                               _endloc.text = p.description;
                               displayPrediction(p);
+                              setState(() {
+                                ispressed=1;
+                              });
                         },
                         decoration: InputDecoration(
                             //border: OutlineInputBorder(),
@@ -332,10 +333,10 @@ class _MyAppState extends State<Search> {
         setState(() {
         _markers.add(Marker(
         markerId: MarkerId('startpin'),
-        position: startpoint,
+        position: endpoint,
         icon: sourceicon));
        controller.animateCamera(CameraUpdate.newCameraPosition(
-       CameraPosition(target: startpoint, zoom: 15.0)));
+       CameraPosition(target: endpoint, zoom: 15.0)));
       });
       }
 

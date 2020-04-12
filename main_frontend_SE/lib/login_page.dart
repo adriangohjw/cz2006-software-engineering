@@ -10,9 +10,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'main.dart';
 
-//import '.././util/screenutil.dart';
-//import '.././models/user.dart';
-
 class Data {
   String username;
   int id;
@@ -182,6 +179,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
   Widget build(BuildContext context) {
+    
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -421,38 +419,46 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-// Future<User> fetchPost(String uname) async {
-//   print('Done');
-//   final response =
-  
-//       await http.get('http://localhost:3333/users/?username=${uname}');
-
-//   if (response.statusCode == 200) {
-//     // If the call to the server was successful (returns OK), parse the JSON.
-//     return User.fromJson(json.decode(response.body));
-//   } else {
-//     // If that call was not successful (response was unexpected), it throws an error.
-//     throw Exception('Failed to load post');
-//   }
-// }
-
 Future getid(String uname, String pcode, BuildContext context) async{
+  var userdetails=[];
+  var routes;
+  var weight;
   
-  final response1 =
-      await http.get('http://localhost:3333/users/?username=${uname}');
-      
-      if (response1.statusCode==200)
+  var response0 = await http.get('http://localhost:3333/users/?username=${uname}');
+  if (response0.statusCode==200)
+  {
+  weight = await (json.decode(response0.body))['weight'];
+  } else{
+    throw Exception('Failed to load weight');
+  }
+  final response1 = await http.get('http://localhost:3333/users/?username=${uname}');
+  final response3 = await http.get('http://localhost:3333/algo/popular_routes/?weight='+weight.toString());
+  if ((response1.statusCode==200) & (response3.statusCode==200))
   {
     String pass = (json.decode(response1.body))['password'];
     print(pass);
     print(pcode);
     if(pass == pcode){
-      data.id =  (json.decode(response1.body))['id'];
-      Navigator.push(context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(id: data.id,)));
+      
     }
     else if(pass != pcode){
+      data.id =  (json.decode(response1.body))['id'];
+      print((json.decode(response1.body))['username']);
+      print((json.decode(response1.body))['name']);
+      print((json.decode(response1.body))['age']);
+      print((json.decode(response1.body))['height']);
+      print((json.decode(response1.body))['weight']);
+      userdetails.add((json.decode(response1.body))['username']);
+      userdetails.add((json.decode(response1.body))['name']);
+      userdetails.add((json.decode(response1.body))['age']);
+      userdetails.add((json.decode(response1.body))['height']);
+      userdetails.add((json.decode(response1.body))['weight']);
+      routes = (json.decode(response3.body));
+      Navigator.push(context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(id: data.id, profDetails: userdetails
+          //,popRoutes: routes,
+          )));
       print("Wrong Pass");
       return false;
     }
@@ -462,35 +468,6 @@ Future getid(String uname, String pcode, BuildContext context) async{
   return false;
     
   }
+
 }
 
-// Future<User> fetchPostCreateUser() async {
-//   final response = await http.put(
-//       'http://localhost:3333/users/?age=${age.text}&height=${height.text}&weight=${weight.text}&username=${username.text}');
-
-//   if (response.statusCode == 200) {
-//     // If the call to the server was successful (returns OK), parse the JSON.
-//     return User.fromJson(json.decode(response.body));
-//   } else {
-//     // If that call was not successful (response was unexpected), it throw an error.
-//     throw Exception('Failed to load post');
-//   }
-// }
-
-// class User {
-//   final String name;
-//   final String username;
-//   final int id;
-
-//   final String password;
-
-//   User({this.id, this.name, this.username, this.password});
-
-//   factory User.fromJson(Map<String, dynamic> json) {
-//     return User(
-//       id: json['id'],
-//       username: json['username'],
-//       name: json['name'],
-//     );
-//   }
-// }

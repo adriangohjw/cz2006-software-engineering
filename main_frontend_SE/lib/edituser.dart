@@ -45,7 +45,6 @@ class _EditUserState extends State<EditUser> {
                   ],
                 ),
                 NewNome(),
-                NewEmail(),
                 NewAge(),
                 NewHeight(),
                 NewWeight(),

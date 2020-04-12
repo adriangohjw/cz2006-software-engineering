@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'Search.dart';
@@ -8,29 +10,39 @@ import 'package:bicycle/login_page.dart';
 
 
 void main() => runApp(MyApp());
-int userid = 1;//has to be extracted from previous file
+int userid;//has to be extracted from previous file
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
       return  MaterialApp(
       title: 'Flutter Demo',
-      home: LoginPage(),
+      home: MyHomePage(id: 1, profDetails: ["adrian", "adrian", 20, 190, 60],),
       );
     }
 }
 
 class MyHomePage extends StatefulWidget {
   int id;
-  MyHomePage({this.id});
+  var profDetails;
+  // var popRoutes;
+  MyHomePage({this.id, this.profDetails
+   // ,this.popRoutes
+   });
   @override
-  _MyHomePageState createState() => _MyHomePageState(userid: id);
+  _MyHomePageState createState() => _MyHomePageState(userid: id, userDetails: profDetails
+  // , searchResults: popRoutes
+  );
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int userid;
-  _MyHomePageState ({@required this.userid});
-  var userdetails;
+  var userDetails;
+  //var searchResults;
+  _MyHomePageState ({@required this.userid, @required this.userDetails
+  //, @required this.searchResults
+  });
+  get http => null;
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -55,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
             },)
           */
-          TabBarView(children: [Search(id: userid), ProfilePage(id: userid, PersDet: userdetails,), PopMap()],
+          TabBarView(children: [Search(id: userid), ProfilePage(id: userid, PersDet: userDetails,), PopMap()],
           physics: NeverScrollableScrollPhysics(),),
         
         bottomNavigationBar: new TabBar(tabs: <Widget>[
@@ -68,6 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
             indicatorSize: TabBarIndicatorSize.label,
             indicatorPadding: EdgeInsets.all(5.0),
             indicatorColor: Colors.blue,
+            onTap: (index) async {
+              
+            },
             
           ),
           backgroundColor: Colors.white,  
@@ -75,5 +90,22 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
     ),
     );
+  }
+  Future getUserDetails()async{
+  var userdetails;
+  var response1 = await http.get('http://localhost:3333/users/id/?id='+userid.toString());
+  if (response1.statusCode==200)
+  {
+    
+  userdetails.add((json.decode(response1.body))['username']);
+  userdetails.add((json.decode(response1.body))['name']);
+  userdetails.add((json.decode(response1.body))['age']);
+  userdetails.add((json.decode(response1.body))['height']);
+  userdetails.add((json.decode(response1.body))['weight']);
+  
+  } else{
+    throw Exception('Failed to load details');
+  }
+  return userdetails;
   }
 }
