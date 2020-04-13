@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:bicycle/new_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'liveNav.dart';
 import 'package:location/location.dart';
+import 'package:http/http.dart' as http;
 
 class Routez extends StatefulWidget {
   int id;
@@ -23,6 +26,7 @@ const double CAMERA_BEARING = 30;
 class _MapPageState extends State<Routez> {
   int UserID;
   var routeDet;
+  var weight;
   _MapPageState({@required this.UserID, @required this.routeDet});
     Completer<GoogleMapController> _controller = Completer();
     Set<Marker> _markers = {};
@@ -96,10 +100,13 @@ class _MapPageState extends State<Routez> {
                 child: CupertinoButton(
                   child: Text("START"),
                   color: Colors.black,
-                  onPressed:(){Navigator.of(context).push(
+                  onPressed:() async {
+                    await getWeight();
+                    print(weight);
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) =>
-              LiveNav(id: UserID, route: routeDet,)),
+              LiveNav(id: UserID, route: routeDet, weight1: weight)),
         );}
                     //_onButtonPressedf
                   ,
@@ -202,6 +209,15 @@ class _MapPageState extends State<Routez> {
         zoom: 17.0,
       ),
     ));
+  }
+  getWeight() async {
+    var response1 = await http.get('http://localhost:3333/users/id/?id='+UserID.toString());
+  if (response1.statusCode==200)
+  {
+  weight = await (json.decode(response1.body))['weight'];
+  } else{
+    throw Exception('Failed to load weight');
+  }
   }
 }
 /*

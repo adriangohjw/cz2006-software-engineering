@@ -262,7 +262,7 @@ class _NewUserState extends State<NewUser> {
 
 Future<User> fetchPost() async {
   final response = await http.post(
-      'http://127.0.0.1:5000/users/?password=${password.text}&name=${name.text}&username=${username.text}');
+      'http://localhost:3333/users/?password=${password.text}&name=${name.text}&username=${username.text}');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful (returns OK), parse the JSON.
@@ -273,7 +273,7 @@ Future<User> fetchPost() async {
   }
 
   final response2 = await http.put(
-      'http://127.0.0.1:5000/users/?username=${username.text}&age=${age.text}&height=${height.text}&weight=${weight.text}&name=${name.text}');
+      'http://localhost:3333/users/?username=${username.text}&age=${age.text}&height=${height.text}&weight=${weight.text}&name=${name.text}');
 
   if (response2.statusCode == 200) {
     // If the call to the server was successful (returns OK), parse the JSON.

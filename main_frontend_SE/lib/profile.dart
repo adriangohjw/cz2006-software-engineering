@@ -1,21 +1,28 @@
+import 'dart:convert';
+import 'package:bicycle/changepassword.dart';
 import 'package:flutter/material.dart';
 import 'edituser.dart';
 import 'netStatistics.dart';
 import 'savedMaps.dart';
 import 'package:http/http.dart' as http;
+class DataUser {
 
+  String username;
+  DataUser({this.username});
+}
+final dataUser = DataUser(username: username);
 class ProfilePage extends StatefulWidget {
   int id;
   var PersDet;
   ProfilePage({@required this.id, @required this.PersDet});
   _ProfilePageState createState() => _ProfilePageState(userid: id,details: PersDet);
 }
-
+var username;
 class _ProfilePageState extends State<ProfilePage> {
   int userid;
   var details;
   _ProfilePageState({@required this.userid, @required this.details});
-
+  var pastRoutes;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -81,11 +88,11 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(height: 30),
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             RaisedButton(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) {
-                  return EditUser();
-                }), ModalRoute.withName('/'));
+              onPressed: () async{
+                dataUser.username = await username;
+                Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => EditUser(dataUser: dataUser,)),
+                    );
               },
               color: Colors.white,
               child: Padding(
@@ -100,7 +107,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(40)),
             ),
             RaisedButton(
-              onPressed: () {},
+              onPressed: () async{
+                dataUser.username = await username;
+                Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => EditPassword(dataUser: dataUser,)),
+                    );
+              },
               color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -183,14 +195,16 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               RaisedButton(
                 // Saved Rides
-                onPressed: () {Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => SavedMap()),
+                onPressed: () async{
+                  await getPastRoutes();
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => SavedMap(id: userid,pastroutes: pastRoutes,)),
                     );},
                 color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
-                    'Saved Rides',
+                    'Past Rides',
                     style: TextStyle(fontSize: 25, color: Colors.black),
                     
                     
@@ -295,4 +309,70 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ]))));
   }
+
+getPastRoutes() async {
+  //print('entered');
+  
+  var response1 = await http.get('http://localhost:3333/users/id/?id='+userid.toString());
+  if (response1.statusCode==200)
+  {
+  pastRoutes = await (json.decode(response1.body))['routes'];
+  username = await (json.decode(response1.body))['username'];
+  } else{
+    throw Exception('Failed to load routes');
+  }
+
+  // final response1 =
+  //     await http.get('http://localhost:3333/users/?username=${uname}');
+  
+  
+  // if (response1.statusCode == 200) {
+  //   weight = await (json.decode(response1.body))['weight'];
+  //   final responsepass = await http.get(
+  //       'http://localhost:3333/users/auth/?username=${uname}&password=${pcode}');
+  //   if (responsepass.statusCode == 200) {
+  //     bool pass = (json.decode(responsepass.body))['result'];
+
+  //     if (pass == true) {
+  //       print('login succesful');
+  //       loginfail = false;
+  //       final response3 = await http.get(
+  //     'http://localhost:3333/algo/popular_routes/?weight=' + weight.toString());
+  //       //setState(() => loading = true);
+  //       data.id = (json.decode(response1.body))['id'];
+  //       print((json.decode(response1.body))['username']);
+  //       print((json.decode(response1.body))['name']);
+  //       print((json.decode(response1.body))['age']);
+  //       print((json.decode(response1.body))['height']);
+  //       print((json.decode(response1.body))['weight']);
+  //       userdetails.add((json.decode(response1.body))['username']);
+  //       userdetails.add((json.decode(response1.body))['name']);
+  //       userdetails.add((json.decode(response1.body))['age']);
+  //       userdetails.add((json.decode(response1.body))['height']);
+  //       userdetails.add((json.decode(response1.body))['weight']);
+  //       routes = (json.decode(response3.body));
+  //       Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //               builder: (context) => MyHomePage(
+  //                     id: data.id, profDetails: userdetails, popRoutes: routes,
+  //                   )));
+  //     } else {
+  //       loginfail = true;
+  //               print("Username or Password is wrong");
+
+  //       return false;
+  //     }
+  //   }
+    
+  // } else {
+  //   loginfail = true;
+
+  //   print('Username or Password is wrong');
+  //   return false;
+  // }
+  // return true;
+  
+}
+
 }

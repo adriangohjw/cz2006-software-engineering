@@ -408,12 +408,18 @@ class MapPageState extends State<LiveNav> {
                     Spacer(flex: 9),
                     FloatingActionButton(
                       heroTag: null,
-                      child: Icon(Icons.pause),
-                      onPressed: () {if(ispressed==0){
-                                        stoptime();
-                                       ispressed=1;}
+                      child :(ispressed==0)?Icon(Icons.pause) : Icon(Icons.play_arrow),
+                      onPressed: () {
+                        if(ispressed==0){
+                          stoptime();
+                          setState(() {
+                            ispressed=1;                            
+                          });
+                        }
                         else{
-                          ispressed=0;
+                          setState((){
+                            ispressed=0;
+                          });                          
                           timePassed();
                         }
                       },
@@ -430,8 +436,12 @@ class MapPageState extends State<LiveNav> {
                     FloatingActionButton(
                       heroTag: null,
                       child: Icon(Icons.stop),
-                      onPressed:(){ _showTravelSummary();
-                      ispressed=1;},
+                      onPressed:(){ stoptime();
+                      _showTravelSummary();
+                      setState(() {
+                        ispressed=1;
+                      });
+                      },
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                     ),
@@ -456,20 +466,20 @@ class MapPageState extends State<LiveNav> {
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return new AlertDialog(
-        title: new Text('Route is complete!'),
+        title: new Text('Toute is complete!'),
         content: new SingleChildScrollView(
           child: new ListBody(
             children: <Widget>[
               Row(
               children: <Widget>[
                 new Text('Distance covered: '),
-                new Text('$distance')
+                new Text('$displaydistance')
                 ],
               ),
               Row(
               children: <Widget>[
                 new Text('Total Time Travelled: '),
-                new Text('$timeinhrs')
+                new Text('$stoptimetodisplay')
                 ],
               ),
               Row(
@@ -550,6 +560,7 @@ setPolylines() async {
         //     DEST_LOCATION.longitude);
         List<PointLatLng> result = polylinePoints.decodePolyline(routeDet[7]);
         print(result);
+        print(routeDet[8]);
         if (result.isNotEmpty) {
           // loop through all PointLatLng points and convert them
           // to a list of LatLng, required by the Polyline
@@ -626,11 +637,11 @@ void _currentLocation() async {
         speed=(currentLocation.speed*(5/18))  ;
         displayspeed=speed.toStringAsFixed(2).toString();
         distance+=(speed*timeinhrs);
-        displaydistance=distance.toStringAsFixed(2);
+        displaydistance=distance.toStringAsFixed(3);
 
 
         speedList.add(speed);
-        calorieCalculator(speed);
+        calorieCalculator(speed,distance);
 
 
       });
@@ -649,13 +660,13 @@ void _currentLocation() async {
     }
     setState(() {
     stoptimetodisplay=swatch.elapsed.inMinutes.toString().padLeft(2,"0")+":"+(swatch.elapsed.inSeconds%60).toString().padLeft(2,"0");
-    timeinhrs=(swatch.elapsed.inSeconds)/3600;
+    timeinhrs=((swatch.elapsed.inSeconds)/3600);
     });
   }
   void stoptime(){
     swatch.stop();
   }
- void calorieCalculator(cSpeed) {
+ void calorieCalculator(cSpeed,distance) {
     if(double.parse(cSpeed)!=0){
       if(double.parse(cSpeed)<8){
         met=4.9;

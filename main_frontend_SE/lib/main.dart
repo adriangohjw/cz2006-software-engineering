@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
       return  MaterialApp(
       title: 'Flutter Demo',
-      home: MyHomePage(id: 1, profDetails: ["adrian", "adrian", 20, 190, 60],),
+      home: LoginPage()
+      //MyHomePage(id: 1, profDetails: ["adrian", "adrian", 20, 190, 60],),
       );
     }
 }
@@ -25,22 +26,21 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   int id;
   var profDetails;
-  // var popRoutes;
+  var popRoutes;
   MyHomePage({this.id, this.profDetails
-   // ,this.popRoutes
+    ,this.popRoutes
    });
   @override
-  _MyHomePageState createState() => _MyHomePageState(userid: id, userDetails: profDetails
-  // , searchResults: popRoutes
+  _MyHomePageState createState() => _MyHomePageState(userid: id, userDetails: profDetails , popularRoutes: popRoutes
   );
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int userid;
   var userDetails;
+  var popularRoutes;
   //var searchResults;
-  _MyHomePageState ({@required this.userid, @required this.userDetails
-  //, @required this.searchResults
+  _MyHomePageState ({@required this.userid, @required this.userDetails, @required this.popularRoutes
   });
   get http => null;
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
             },)
           */
-          TabBarView(children: [Search(id: userid), ProfilePage(id: userid, PersDet: userDetails,), PopMap()],
+          TabBarView(children: [Search(id: userid), ProfilePage(id: userid, PersDet: userDetails,), PopMap(id:1, poproutes: popularRoutes,)],
           physics: NeverScrollableScrollPhysics(),),
         
         bottomNavigationBar: new TabBar(tabs: <Widget>[

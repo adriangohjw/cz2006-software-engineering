@@ -84,7 +84,14 @@ def PopularRoutes(weight):
         df2["Description"][i] = df2["Description"][i][re.search("\s<td>", df2["Description"][i]).span()[1]:re.search("</td>", df2["Description"][i]).span()[0]]
         a = list(df2["Description"].value_counts().keys())
         res = []
+    rem=[]
     for i in range(len(a)):
+        if (len(df2[df2["Description"] == a[i]]) < 22):
+            rem.append(a[i])
+    a=[x for x in a if x not in rem]
+    np.random.shuffle(a)
+    
+    for i in range(7):
         b = []
         for j in df2[df2["Description"] == a[i]].geometry:
             try:

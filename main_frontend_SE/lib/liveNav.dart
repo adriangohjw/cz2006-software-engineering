@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:ffi';
+import 'package:bicycle/new_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'dart:async';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:http/http.dart' as http;
 
 const double CAMERA_ZOOM = 16;
 const double CAMERA_TILT = 60;
@@ -14,15 +17,19 @@ const double CAMERA_BEARING = 30;
 class LiveNav extends StatefulWidget {
   int id;
   var route;
-  LiveNav({@required this.id, @required this.route});
+  int weight1;
+
+  LiveNav({@required this.id, @required this.route,@required this.weight1 });
   @override
-  State<StatefulWidget> createState() => MapPageState(UserID:id, routeDet: route);
+  State<StatefulWidget> createState() => MapPageState(UserID:id, routeDet: route,weight:weight1);
 }
 
 class MapPageState extends State<LiveNav> {
   int UserID;
   var routeDet;
-  MapPageState({@required this.UserID, @required this.routeDet});
+  int weight;
+  
+  MapPageState({@required this.UserID, @required this.routeDet,@required this.weight});
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = Set<Marker>();
 // for my drawn routes on the map
@@ -43,9 +50,12 @@ class MapPageState extends State<LiveNav> {
   double speed=0.0;
   String displayspeed="0.0";
   double timeinhrs=0.0;
-  int ispressed=0,weight=100;
+  int ispressed=0;
+  String display_distance='0.0';
   double distance=0;
-  String displaydistance='0.0';
+  String displaydistance='0.0',displaycal='0';
+  double ascent,descent,flat;
+  String displayascent='0.0',displaydescent='0.0',displayflat='0.0';
   BitmapDescriptor currentlocationicon ;
   var swatch=new Stopwatch();
   var speedList=new List();
@@ -122,6 +132,7 @@ class MapPageState extends State<LiveNav> {
 
   @override
   Widget build(BuildContext context) {
+    display_distance=routeDet[1];
     CameraPosition initialCameraPosition = CameraPosition(
         zoom: CAMERA_ZOOM,
         tilt: CAMERA_TILT,
@@ -173,7 +184,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "10KM", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$display_distance", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -208,7 +219,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "$cal", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displaycal", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -284,7 +295,7 @@ class MapPageState extends State<LiveNav> {
                       alignment: Alignment.centerLeft,
                       padding: EdgeInsets.only(left: 30),
                       child: Text(
-                        "2 m", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displayascent", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontSize: 25,
                         ),
@@ -324,7 +335,7 @@ class MapPageState extends State<LiveNav> {
                       padding: EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "3 m", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displaydescent", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontSize: 25,
                         ),
@@ -436,11 +447,12 @@ class MapPageState extends State<LiveNav> {
                     FloatingActionButton(
                       heroTag: null,
                       child: Icon(Icons.stop),
-                      onPressed:(){ stoptime();
-                      _showTravelSummary();
-                      setState(() {
+                      onPressed:(){ 
+                    setState(() {
                         ispressed=1;
                       });
+                        stoptime();
+                      _showTravelSummary();
                       },
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -466,7 +478,7 @@ class MapPageState extends State<LiveNav> {
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return new AlertDialog(
-        title: new Text('Toute is complete!'),
+        title: new Text('Route is complete!'),
         content: new SingleChildScrollView(
           child: new ListBody(
             children: <Widget>[
@@ -485,25 +497,25 @@ class MapPageState extends State<LiveNav> {
               Row(
               children: <Widget>[
                 new Text('Total Calories Burnt: '),
-                new Text('$cal')
+                new Text('$displaycal')
                 ],
               ),
               Row(
               children: <Widget>[
                 new Text('Total Ascent: '),
-                new Text('15 Km')
+                new Text('$displayascent')
                 ],
               ),
               Row(
               children: <Widget>[
                 new Text('Total Descent: '),
-                new Text('10 Km')
+                new Text('$displaydescent')
                 ],
               ),
               Row(
               children: <Widget>[
                 new Text('Total Flat Pathway: '),
-                new Text('5 Km')
+                new Text('$displayflat')
                 ],
               ),
             ],
@@ -512,7 +524,8 @@ class MapPageState extends State<LiveNav> {
         actions: <Widget>[
           new FlatButton(
             child: new Text('Complete Journey'),
-            onPressed: () {
+            onPressed: () async{
+              await saveRide();
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               Navigator.of(context).pop();
@@ -632,19 +645,23 @@ void _currentLocation() async {
   Future _location() async{
    Location location = Location();
     location.onLocationChanged.listen((LocationData value) {
+      if(ispressed==0){
       setState(() {
         currentLocation = value;
         speed=(currentLocation.speed*(5/18))  ;
         displayspeed=speed.toStringAsFixed(2).toString();
         distance+=(speed*timeinhrs);
-        displaydistance=distance.toStringAsFixed(3);
+        displaydistance=distance.toStringAsFixed(2);
+        calorieCalculator(speed, distance);
+        getdetails(routeDet[8], distance);
 
 
         speedList.add(speed);
-        calorieCalculator(speed,distance);
+      
 
 
       });
+    }
     });
   }
   void timePassed(){
@@ -667,32 +684,93 @@ void _currentLocation() async {
     swatch.stop();
   }
  void calorieCalculator(cSpeed,distance) {
-    if(double.parse(cSpeed)!=0){
-      if(double.parse(cSpeed)<8){
+    if(cSpeed!=0){
+      if(cSpeed<8){
         met=4.9;
       }
-      else if(double.parse(cSpeed)>8&&(double.parse(cSpeed)<11)){
+      else if(cSpeed>8&&cSpeed<11){
         met=6.8;
       }
-      else if(double.parse(cSpeed)>11&&(double.parse(cSpeed)<13)){
+      else if(cSpeed>11&&cSpeed<13){
         met=8;
       }
-       else if(double.parse(cSpeed)>13&&(double.parse(cSpeed)<16)){
+       else if(cSpeed>13&&cSpeed<16){
         met=11;
       }
-       else if(int.parse(cSpeed)>16){
+       else if(cSpeed>16){
         met=15.8;
       }
-    double distmile=distance*0.621371;
-    double calpm=(met*weight*3.5)/200;
-    double time=(distmile/double.parse(cSpeed))*60; 
+   
     setState(() { 
-      cal=cal+(calpm*time);
-      cal=num.parse(cal.toStringAsFixed(2));
+      print("Weight");
+      print(weight);
+    double calpm=(met*weight*3.5)/200;
+    double time1=(distance/(speed))*60;
+    cal=cal+(calpm*(5/60));
+    displaycal=cal.toStringAsFixed(0);
   });
   }
       
 }
+void getdetails(List a,double distance){
+  int length=a.length;
+  int b;
+  for(int i=0;i<length;i++)
+  {
+     if(distance>a[i][0]&&(distance<a[i+1][0])){
+            b=i+1;
+            setState(() {
+            ascent=a[b][1];
+            descent=a[b][2];
+            flat=distance-(ascent+descent);
+            displayascent=ascent.toStringAsFixed(2).toString();
+            displaydescent=descent.toStringAsFixed(2).toString();
+            displayflat=flat.toStringAsFixed(2).toString();
+            });
+            break;}
+        else{
+            setState(() {
+            ascent=0;
+            descent=0;
+            flat=distance;
+            displayascent=ascent.toStringAsFixed(2).toString();
+            displaydescent=descent.toStringAsFixed(2).toString();
+            displayflat=flat.toStringAsFixed(2).toString();
+            });
+            break;
+        }
+
+  }
+
+
+}
+saveRide() async {
+  var username;
+    var response1 = await http.get('http://localhost:3333/users/id/?id='+UserID.toString());
+  if (response1.statusCode==200)
+  {
+  username = await (json.decode(response1.body))['username'];
+  } else{
+    throw Exception('Failed to load username');
+  }
+  print(routeDet[1]);
+  print(routeDet[7].toString());
+  print(routeDet[0]['legs'][0]["end_location"]['lat']);
+  print(routeDet[9]);
+  String fitness = routeDet[9]?.toString() ?? "Empty";
+  print(fitness);
+  
+  // print();
+  // print();
+  var response2 = await http.post("http://localhost:3333/routes/?username="+username+'&distance='+ distance.round().toString()+'&purpose='+fitness+ '&polyline='+routeDet[7].toString()+'&ascent='+ ascent.round().toString()+'&descent='+ descent.round().toString()+ '&startPos_latitude='+routeDet[0]['legs'][0]["start_location"]['lat'].toString()+'&startPos_longtitude='+routeDet[0]['legs'][0]["start_location"]['lng'].toString()+'&endPos_latitude='+routeDet[0]['legs'][0]["end_location"]['lat'].toString()+'&endPos_longtitude='+ routeDet[0]['legs'][0]["end_location"]['lng'].toString()+'&calories='+cal.round().toString());
+  if (response2.statusCode==200)
+  {
+  } else{
+    throw Exception('Failed to post data');
+  }
+  
+  }
+
 }
 
 

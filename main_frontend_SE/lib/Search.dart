@@ -8,15 +8,16 @@ import 'package:geocoder/geocoder.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
-
+import 'loadingPage.dart';
 import 'SearchResults.dart';
 
 class Search extends StatefulWidget {
+  
   int id;
   Search({@required this.id});
   _MyAppState createState() => _MyAppState(userid:id);
 }
-
+bool loading = false;
 GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyA3YCs9pJnxE9gXAAkGDO3vNxxOsVgjWw8");
 
@@ -38,11 +39,12 @@ class _MyAppState extends State<Search> {
   var searchAttr=[];
   TextEditingController _startloc = new TextEditingController();
   TextEditingController _endloc = new TextEditingController();
-
-
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading
+        ? LoadingPage()
+        : Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
@@ -56,7 +58,9 @@ class _MyAppState extends State<Search> {
               zoom: 12.0,
             ),
           ),
-          Column(children: <Widget>[
+          Form(
+                  key: _formKey,
+                  child: Column(children: <Widget>[
             Container(
               margin: EdgeInsets.only(top: 50),
               padding: EdgeInsets.only(right: 20, left: 20),
@@ -74,11 +78,17 @@ class _MyAppState extends State<Search> {
                           ),
                         ],
                       ),
-                      child: TextField(
+                      child: TextFormField(
                         cursorColor: Colors.black,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.go,
                         controller: _startloc,
+                        validator: (value) {
+                                if (value == '') {
+                                  return 'Please enter a valid start location!';
+                                }
+                                return null;
+                              },
                         onTap: () async {
                           p = await PlacesAutocomplete.show(
                               context: context,
@@ -118,11 +128,17 @@ class _MyAppState extends State<Search> {
                           ),
                         ],
                       ),
-                      child: TextField(
+                      child: TextFormField(
                         cursorColor: Colors.black,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.go,
                         controller: _endloc,
+                        validator: (value) {
+                                if (value == '') {
+                                  return 'Please enter a valid end location!';
+                                }
+                                return null;
+                              },
                         onTap: () async {
                               Prediction p = await PlacesAutocomplete.show(
                               context: context,
@@ -225,10 +241,23 @@ class _MyAppState extends State<Search> {
                       style: TextStyle(color: Colors.white)),
                   splashColor: Colors.grey,
                   onPressed: () async {
+                    if (_formKey.currentState.validate()) {
+                            // If the form is valid, display a Snackbar.
+
+                            setState(() => loading = true);
+                            await getSearchResults();
+                            setState(() => loading = false);
+                    setState(() {
+                                          loading = true;
+                                        });
                     await getSearchResults();
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => MyRecommPage(id: userid, routes:SearchResults, length: SearchResults[0].length, search: searchAttr,)),
-                    );
+                    
+                    );}
+                    setState(() {
+                                          loading = false;
+                                        });
                   }),
             ),
             
@@ -248,7 +277,9 @@ class _MyAppState extends State<Search> {
               ],
             ),
           ),
-          ])
+          ]
+          )
+          )
         ],
       ),
     );
@@ -278,7 +309,7 @@ class _MyAppState extends State<Search> {
     ));
   }
   getSearchResults() async {
-  var weight = 100; //default
+  var weight; //default
   
   var response1 = await http.get('http://localhost:3333/users/id/?id='+userid.toString());
   if (response1.statusCode==200)

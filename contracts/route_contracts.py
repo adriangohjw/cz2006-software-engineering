@@ -27,11 +27,11 @@ def validate_distance(distance):
 
     # if description params is empty
     if not distance: 
-        raise ValueError("distance is empty")
+        distance=0
 
     # if not integer
     if not isinstance(distance, int):
-        raise TypeError("distance is not integer")
+        raise TypeError("distance is not int")
 
 
 def validate_purpose(purpose):
@@ -79,26 +79,26 @@ def validate_ascent(ascent):
 
     # if description params is empty
     if not ascent: 
-        raise ValueError("ascent is empty")
+        ascent=0
 
     # if not integer
     if not isinstance(ascent, int):
-        raise TypeError("ascent is not integer")
+        raise TypeError("ascent is not int")
 
 
 def validate_descent(descent):
 
     # if not found in params
     if (descent is None):
-        raise TypeError("Request params (descent) not found")
+        descent=0.0
 
     # if description params is empty
     if not descent: 
-        raise ValueError("descent is empty")
+        descent=0
 
     # if not integer
     if not isinstance(descent, int):
-        raise TypeError("descent is not integer")
+        raise TypeError("descent is not int")
 
 
 def route_read_contract(request):    

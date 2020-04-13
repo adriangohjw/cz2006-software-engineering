@@ -9,6 +9,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'main.dart';
+import 'loadingPage.dart';
+
+//import '.././util/screenutil.dart';
+//import '.././models/user.dart';
 
 class Data {
   String username;
@@ -18,6 +22,8 @@ class Data {
 }
 
 final Data data = Data(username: '', id: 0);
+bool loginfail = false;
+bool loading = false;
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: <String>[
@@ -161,6 +167,9 @@ class FirstScreen extends StatelessWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _myUsername = new TextEditingController();
   TextEditingController _myPassword = new TextEditingController();
+
+  //bool loginfail = false;
+
   Widget radioButton(bool isSelected) => Container(
         width: 16.0,
         height: 16.0,
@@ -179,195 +188,213 @@ class _LoginPageState extends State<LoginPage> {
       );
 
   Widget build(BuildContext context) {
-    
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: Container(),
-            flex: 5,
-          ),
-          Expanded(
-            flex: 15,
-            child: Container(
-              alignment: Alignment.center,
-              child: Image(image: AssetImage("assets/primusnameicon.png")),
-            ),
-          ),
-          Spacer(),
-          Expanded(
-            flex: 40,
-            child: Container(
-              alignment: Alignment.center,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                height: 275,
-                child: Card(
-                  semanticContainer: true,
-                  margin: EdgeInsets.only(right: 20, left: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+    return loading
+        ? LoadingPage()
+        : Scaffold(
+            resizeToAvoidBottomPadding: false,
+            backgroundColor: Colors.white,
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  child: Container(),
+                  flex: 5,
+                ),
+                Expanded(
+                  flex: 15,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child:
+                        Image(image: AssetImage("assets/primusnameicon.png")),
                   ),
-                  elevation: 10,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      width: 500,
-                      margin: EdgeInsets.all(20),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            height: 45,
-                            child: Text("Login",
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    letterSpacing: .6,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          Container(
-                            height: 80,
-                            padding: EdgeInsets.only(top: 10),
-                            child: TextField(
-                              controller: _myUsername,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Username',
+                ),
+                Spacer(),
+                Expanded(
+                  flex: 40,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 275,
+                          child: Card(
+                            semanticContainer: true,
+                            margin: EdgeInsets.only(right: 20, left: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 10,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 500,
+                                margin: EdgeInsets.all(20),
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      alignment: Alignment.center,
+                                      height: 45,
+                                      child: Text("Login",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              letterSpacing: .6,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    Container(
+                                      height: 80,
+                                      padding: EdgeInsets.only(top: 10),
+                                      child: TextField(
+                                        controller: _myUsername,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          labelText: 'Username',
+                                        ),
+                                        onSubmitted: (String value) {
+                                          _myUsername.text = value;
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 80,
+                                      padding: EdgeInsets.only(top: 10),
+                                      child: TextField(
+                                        obscureText: true,
+                                        controller: _myPassword,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          labelText: 'Password',
+                                          errorText: loginfail
+                                              ? 'Username or password is incorrect!'
+                                              : null,
+                                        ),
+                                        onSubmitted: (String value) {
+                                          _myPassword.text = value;
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 30,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          Text(
+                                            "Forgot Password?",
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontFamily: "Poppins-Medium",
+                                                fontSize:
+                                                    ScreenUtil.getInstance()
+                                                        .setSp(25)),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              onSubmitted: (String value) {
-                                _myUsername.text = value;
-                              },
                             ),
                           ),
-                          Container(
-                            height: 80,
-                            padding: EdgeInsets.only(top: 10),
-                            child: TextField(
-                              obscureText: true,
-                              controller: _myPassword,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Password',
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 20, right: 20, left: 20),
+                          height: 60,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 75,
+                                child: Container(
+                                  color: Colors.white,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'Your first time?',
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      NewUser()));
+                                        },
+                                        child: Text(
+                                          'SIGN UP',
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            color: Colors.black,
+                                          ),
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              onSubmitted: (String value) {
-                                _myPassword.text = value;
-                              },
-                            ),
+                              Expanded(
+                                flex: 25,
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    height: 40,
+                                    child: RaisedButton(
+                                      color: Colors.pink,
+                                      splashColor: Colors.white,
+                                      child: const Text(
+                                        'SIGN IN',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        data.username = _myUsername.text;
+                                        //print('works');
+                                        setState(() {
+                                          loading = true;
+                                        });
+                                        bool loginsuccess = await getid(_myUsername.text,
+                                            _myPassword.text, context);
+                                        loginfail = true;
+                                        print("loginfail");
+                                        setState(() {
+                                          print(loginsuccess);
+                                          if(loginsuccess==false){loading = false;}
+                                          
+                                        });
+
+                                        //User user = await fetchPost(_myUsername.text);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            height: 30,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Text(
-                                  "Forgot Password?",
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontFamily: "Poppins-Medium",
-                                      fontSize:
-                                          ScreenUtil.getInstance().setSp(25)),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ), 
-            Container(
-              margin: EdgeInsets.only(top: 20, right: 20, left: 20),
-              height: 60,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    flex: 75,
+                Expanded(
+                  flex: 15,
+                  child: Container(
+                    alignment: Alignment.center,
                     child: Container(
-                      color: Colors.white,
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Your first time?',
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.black,
-                            ),
-                          ),
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => NewUser()));
-                            },
-                            child: Text(
-                              'SIGN UP',
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                          ),
-                        ],
-                      ),
+                      height: 50,
+                      //margin: EdgeInsets.only(top: 30),
+                      child: _signInButton(),
                     ),
                   ),
-                  Expanded(
-                    flex: 25,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 40,
-                        child: RaisedButton(
-                          color: Colors.black,
-                          splashColor: Colors.white,
-                          child: const Text(
-                            'SIGN IN',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          onPressed: () async {
-                            data.username = _myUsername.text;
-                            //print('works');
-                            getid(_myUsername.text, _myPassword.text, context);
-                            //User user = await fetchPost(_myUsername.text);
-                           
-                            
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),],
+                ),
+              ],
             ),
-            ),
-          ),
-          
-          Expanded(
-            flex: 15,
-            child: Container(
-              alignment: Alignment.center,
-              child: Container(
-                height: 50,
-                //margin: EdgeInsets.only(top: 30),
-                child: _signInButton(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Future<void> _handleSignIn() async {
@@ -419,55 +446,110 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-Future getid(String uname, String pcode, BuildContext context) async{
-  var userdetails=[];
+// Future<User> fetchPost(String uname) async {
+//   print('Done');
+//   final response =
+
+//       await http.get('http://localhost:3333/users/?username=${uname}');
+
+//   if (response.statusCode == 200) {
+//     // If the call to the server was successful (returns OK), parse the JSON.
+//     return User.fromJson(json.decode(response.body));
+//   } else {
+//     // If that call was not successful (response was unexpected), it throws an error.
+//     throw Exception('Failed to load post');
+//   }
+// }
+
+Future<bool> getid(String uname, String pcode, BuildContext context) async {
+  //print('entered');
+  var userdetails = [];
   var routes;
   var weight;
-  
-  var response0 = await http.get('http://localhost:3333/users/?username=${uname}');
-  if (response0.statusCode==200)
-  {
-  weight = await (json.decode(response0.body))['weight'];
-  } else{
-    throw Exception('Failed to load weight');
-  }
-  final response1 = await http.get('http://localhost:3333/users/?username=${uname}');
-  final response3 = await http.get('http://localhost:3333/algo/popular_routes/?weight='+weight.toString());
-  if ((response1.statusCode==200) & (response3.statusCode==200))
-  {
-    String pass = (json.decode(response1.body))['password'];
-    print(pass);
-    print(pcode);
-    if(pass == pcode){
-      
-    }
-    else if(pass != pcode){
-      data.id =  (json.decode(response1.body))['id'];
-      print((json.decode(response1.body))['username']);
-      print((json.decode(response1.body))['name']);
-      print((json.decode(response1.body))['age']);
-      print((json.decode(response1.body))['height']);
-      print((json.decode(response1.body))['weight']);
-      userdetails.add((json.decode(response1.body))['username']);
-      userdetails.add((json.decode(response1.body))['name']);
-      userdetails.add((json.decode(response1.body))['age']);
-      userdetails.add((json.decode(response1.body))['height']);
-      userdetails.add((json.decode(response1.body))['weight']);
-      routes = (json.decode(response3.body));
-      Navigator.push(context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(id: data.id, profDetails: userdetails
-          //,popRoutes: routes,
-          )));
-      print("Wrong Pass");
-      return false;
-    }
-  } 
-  else{
-  print('WrongUser');
-  return false;
-    
-  }
 
+
+
+  final response1 =
+      await http.get('http://localhost:3333/users/?username=${uname}');
+  
+  
+  if (response1.statusCode == 200) {
+    weight = await (json.decode(response1.body))['weight'];
+    final responsepass = await http.get(
+        'http://localhost:3333/users/auth/?username=${uname}&password=${pcode}');
+    if (responsepass.statusCode == 200) {
+      bool pass = (json.decode(responsepass.body))['result'];
+
+      if (pass == true) {
+        print('login succesful');
+        loginfail = false;
+        final response3 = await http.get(
+      'http://localhost:3333/algo/popular_routes/?weight=' + weight.toString());
+        //setState(() => loading = true);
+        data.id = (json.decode(response1.body))['id'];
+        print((json.decode(response1.body))['username']);
+        print((json.decode(response1.body))['name']);
+        print((json.decode(response1.body))['age']);
+        print((json.decode(response1.body))['height']);
+        print((json.decode(response1.body))['weight']);
+        userdetails.add((json.decode(response1.body))['username']);
+        userdetails.add((json.decode(response1.body))['name']);
+        userdetails.add((json.decode(response1.body))['age']);
+        userdetails.add((json.decode(response1.body))['height']);
+        userdetails.add((json.decode(response1.body))['weight']);
+        routes = (json.decode(response3.body));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyHomePage(
+                      id: data.id, profDetails: userdetails, popRoutes: routes,
+                    )));
+      } else {
+        loginfail = true;
+                print("Username or Password is wrong");
+
+        return false;
+      }
+    }
+    
+  } else {
+    loginfail = true;
+
+    print('Username or Password is wrong');
+    return false;
+  }
+  return true;
+  
 }
 
+
+// Future<User> fetchPostCreateUser() async {
+//   final response = await http.put(
+//       'http://localhost:3333/users/?age=${age.text}&height=${height.text}&weight=${weight.text}&username=${username.text}');
+
+//   if (response.statusCode == 200) {
+//     // If the call to the server was successful (returns OK), parse the JSON.
+//     return User.fromJson(json.decode(response.body));
+//   } else {
+//     // If that call was not successful (response was unexpected), it throw an error.
+//     throw Exception('Failed to load post');
+//   }
+// }
+
+// class User {
+//   final String name;
+//   final String username;
+//   final int id;
+
+//   final String password;
+
+//   User({this.id, this.name, this.username, this.password});
+
+//   factory User.fromJson(Map<String, dynamic> json) {
+//     return User(
+//       id: json['id'],
+//       username: json['username'],
+//       name: json['name'],
+//     );
+//   }
+// }

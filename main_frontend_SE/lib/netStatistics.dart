@@ -80,6 +80,7 @@ class StatsState extends State<NetStats> {
     List<charts.Series<DailyDist, String>> seriesdist = [
       charts.Series(
           id: "Daily Distance this week",
+          
           data: distData,
           domainFn: (DailyDist seriesdist, _) => seriesdist.date,
           measureFn: (DailyDist seriesdist, _) => seriesdist.dist,
@@ -140,6 +141,7 @@ class StatsState extends State<NetStats> {
                         child: Column(
                           children: <Widget>[
                             Expanded(
+                              
                               child: charts.BarChart(seriesdist, animate: true),
                             ),
                           ],
