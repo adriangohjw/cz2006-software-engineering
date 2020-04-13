@@ -57,7 +57,7 @@ class Route(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     distance = db.Column(db.Integer, nullable=False)    # in metre
-    polyline = db.Column(db.String(255), nullable=False)
+    polyline = db.Column(db.Text, nullable=False)
     startPos_id = db.Column(db.Integer, db.ForeignKey('points.id'), nullable=False)
     endPos_id = db.Column(db.Integer, db.ForeignKey('points.id'), nullable=False)
     purpose = db.Column(db.String(255), nullable=False)
