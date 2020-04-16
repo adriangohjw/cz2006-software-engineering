@@ -25,7 +25,7 @@ def route_read_operation(id):
 
     # route is not found
     if route is None:
-        raise ErrorWithCode(404, "No route found")
+        raise ErrorWithCode(409, "No route found")
 
     # success case
     return route
@@ -40,7 +40,7 @@ def route_create_operation(
     user = userRead(col='username', value=username)
 
     if user is None:
-        raise ErrorWithCode(404, "No user found")
+        raise ErrorWithCode(409, "No user found")
 
     route = initialize_route(
         user.id, distance, polyline, purpose, calories, ascent, descent,
@@ -49,7 +49,7 @@ def route_create_operation(
     )
 
     if routeCreate(route) == False:
-        raise ErrorWithCode(400, "Unsuccessful")
+        raise ErrorWithCode(503, "Unsuccessful")
 
     # success case
     return route
@@ -61,13 +61,13 @@ def route_update_operation(id, calories):
 
     # route is not found
     if route is None:
-        raise ErrorWithCode(404, "No route found")
+        raise ErrorWithCode(409, "No route found")
 
     if calories is not None:
         route.calories = calories
 
     if routeUpdate() == False:
-        raise ErrorWithCode(400, "Unsuccessful")
+        raise ErrorWithCode(503, "Unsuccessful")
 
     # success case
     return route
@@ -79,10 +79,10 @@ def route_delete_operation(id):
     
     # route is not found
     if route is None:
-        raise ErrorWithCode(404, "No route found")
+        raise ErrorWithCode(409, "No route found")
 
     if routeDelete(id) == False:
-        raise ErrorWithCode(400, "Unsuccessful")
+        raise ErrorWithCode(503, "Unsuccessful")
 
     # success case
     return True

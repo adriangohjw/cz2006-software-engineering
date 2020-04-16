@@ -153,11 +153,11 @@ class Test_user_contracts(unittest.TestCase):
 
     def test_user_update_password_contract(self):
 
-        with app.test_request_context('/?id=1&current_password=password1&new_password=password2', method='PUT'):
+        with app.test_request_context('/?username=adriangohjw&current_password=password1&new_password=password2', method='PUT'):
             self.assertEqual(
                 user_update_password_contract(request), 
                 {
-                    'id': 1,
+                    'username': 'adriangohjw',
                     'current_password': 'password1',
                     'new_password': 'password2'
                 }

@@ -82,17 +82,16 @@ class Test_users_operations(unittest.TestCase):
     def test_user_update_password_operation(self):
 
         with self.assertRaises(ErrorWithCode):
-            user_update_password_operation(1, 'password_wrong', 'password_new')
-            user_update_password_operation(2, 'password', 'password_new')
+            user_update_password_operation('', 'password_wrong', 'password_new')
+            user_update_password_operation('', 'password', 'password_new')
     
-        self.assertIsNotNone(user_update_password_operation(1, 'password', 'password_new'))
+        self.assertIsNotNone(user_update_password_operation('johndoe', 'password', 'password_new'))
 
     
     def test_auth_operation(self):
 
         self.assertRaises(ErrorWithCode, auth_operation, 'johndoe1', 'password')
         self.assertTrue(auth_operation('johndoe', 'password'))
-        self.assertFalse(auth_operation('johndoe', 'password_wrong'))
 
 
 if __name__ == '__main__':
