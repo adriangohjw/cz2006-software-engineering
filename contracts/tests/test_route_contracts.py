@@ -42,9 +42,6 @@ class Test_route_contracts(unittest.TestCase):
             validate_distance(None)
             validate_distance(1)
 
-        with self.assertRaises(ValueError):
-            validate_distance('')
-
     
     def test_validate_purpose(self):
         
@@ -80,18 +77,12 @@ class Test_route_contracts(unittest.TestCase):
             validate_ascent(None)
             validate_ascent(1)
 
-        with self.assertRaises(ValueError):
-            validate_ascent('')
-
 
     def test_validate_descent(self):
         
         with self.assertRaises(TypeError):
             validate_descent(None)
             validate_descent(1)
-
-        with self.assertRaises(ValueError):
-            validate_descent('')
 
 
     def test_route_read_contract(self):
