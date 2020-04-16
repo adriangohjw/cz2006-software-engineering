@@ -529,7 +529,6 @@ class MapPageState extends State<LiveNav> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               Navigator.of(context).pop();
-              Navigator.of(context).pop();
             },
           ),
         ],

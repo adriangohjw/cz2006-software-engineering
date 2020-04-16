@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
             },)
           */
-          TabBarView(children: [Search(id: userid), ProfilePage(id: userid, PersDet: userDetails,), PopMap(id:1, poproutes: popularRoutes,)],
+          TabBarView(children: [Search(id: userid), ProfilePage(id: userid, PersDet: userDetails,popRoutes: popularRoutes,), PopMap(id:1, poproutes: popularRoutes,)],
           physics: NeverScrollableScrollPhysics(),),
         
         bottomNavigationBar: new TabBar(tabs: <Widget>[

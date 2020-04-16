@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: a9e33483619c
+Revision ID: c5538e920b89
 Revises: 
-Create Date: 2020-04-07 03:20:39.200530
+Create Date: 2020-04-13 14:06:09.732079
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a9e33483619c'
+revision = 'c5538e920b89'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -41,16 +41,16 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('distance', sa.Integer(), nullable=False),
-    sa.Column('polyline', sa.String(length=255), nullable=False),
-    sa.Column('startPos', sa.Integer(), nullable=False),
-    sa.Column('endPos', sa.Integer(), nullable=False),
+    sa.Column('polyline', sa.Text(), nullable=False),
+    sa.Column('startPos_id', sa.Integer(), nullable=False),
+    sa.Column('endPos_id', sa.Integer(), nullable=False),
     sa.Column('purpose', sa.String(length=255), nullable=False),
     sa.Column('calories', sa.Integer(), nullable=True),
     sa.Column('ascent', sa.Integer(), nullable=False),
     sa.Column('descent', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['endPos'], ['points.id'], ),
-    sa.ForeignKeyConstraint(['startPos'], ['points.id'], ),
+    sa.ForeignKeyConstraint(['endPos_id'], ['points.id'], ),
+    sa.ForeignKeyConstraint(['startPos_id'], ['points.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

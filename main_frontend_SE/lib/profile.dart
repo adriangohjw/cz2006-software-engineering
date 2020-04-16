@@ -14,14 +14,16 @@ final dataUser = DataUser(username: username);
 class ProfilePage extends StatefulWidget {
   int id;
   var PersDet;
-  ProfilePage({@required this.id, @required this.PersDet});
-  _ProfilePageState createState() => _ProfilePageState(userid: id,details: PersDet);
+  var popRoutes;
+  ProfilePage({@required this.id, @required this.PersDet, @required this.popRoutes});
+  _ProfilePageState createState() => _ProfilePageState(userid: id,details: PersDet, popR: popRoutes);
 }
 var username;
 class _ProfilePageState extends State<ProfilePage> {
   int userid;
   var details;
-  _ProfilePageState({@required this.userid, @required this.details});
+  var popR;
+  _ProfilePageState({@required this.userid, @required this.details, @required this.popR});
   var pastRoutes;
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () async{
                 dataUser.username = await username;
                 Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => EditUser(dataUser: dataUser,)),
+                      MaterialPageRoute(builder: (context) => EditUser(dataUser: dataUser,poproutes: popR,)),
                     );
               },
               color: Colors.white,
@@ -110,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () async{
                 dataUser.username = await username;
                 Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => EditPassword(dataUser: dataUser,)),
+                      MaterialPageRoute(builder: (context) => EditPassword(dataUser: dataUser,pop: popR,)),
                     );
               },
               color: Colors.white,
@@ -311,7 +313,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
 getPastRoutes() async {
-  //print('entered');
   
   var response1 = await http.get('http://localhost:3333/users/id/?id='+userid.toString());
   if (response1.statusCode==200)
@@ -321,57 +322,6 @@ getPastRoutes() async {
   } else{
     throw Exception('Failed to load routes');
   }
-
-  // final response1 =
-  //     await http.get('http://localhost:3333/users/?username=${uname}');
-  
-  
-  // if (response1.statusCode == 200) {
-  //   weight = await (json.decode(response1.body))['weight'];
-  //   final responsepass = await http.get(
-  //       'http://localhost:3333/users/auth/?username=${uname}&password=${pcode}');
-  //   if (responsepass.statusCode == 200) {
-  //     bool pass = (json.decode(responsepass.body))['result'];
-
-  //     if (pass == true) {
-  //       print('login succesful');
-  //       loginfail = false;
-  //       final response3 = await http.get(
-  //     'http://localhost:3333/algo/popular_routes/?weight=' + weight.toString());
-  //       //setState(() => loading = true);
-  //       data.id = (json.decode(response1.body))['id'];
-  //       print((json.decode(response1.body))['username']);
-  //       print((json.decode(response1.body))['name']);
-  //       print((json.decode(response1.body))['age']);
-  //       print((json.decode(response1.body))['height']);
-  //       print((json.decode(response1.body))['weight']);
-  //       userdetails.add((json.decode(response1.body))['username']);
-  //       userdetails.add((json.decode(response1.body))['name']);
-  //       userdetails.add((json.decode(response1.body))['age']);
-  //       userdetails.add((json.decode(response1.body))['height']);
-  //       userdetails.add((json.decode(response1.body))['weight']);
-  //       routes = (json.decode(response3.body));
-  //       Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //               builder: (context) => MyHomePage(
-  //                     id: data.id, profDetails: userdetails, popRoutes: routes,
-  //                   )));
-  //     } else {
-  //       loginfail = true;
-  //               print("Username or Password is wrong");
-
-  //       return false;
-  //     }
-  //   }
-    
-  // } else {
-  //   loginfail = true;
-
-  //   print('Username or Password is wrong');
-  //   return false;
-  // }
-  // return true;
   
 }
 

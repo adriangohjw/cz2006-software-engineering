@@ -64,7 +64,7 @@ def validate_calories(calories):
 
     # if description params is empty
     if not calories: 
-        raise ValueError("calories is empty")
+        calories=0
 
     # if not integer
     if not isinstance(calories, int):
