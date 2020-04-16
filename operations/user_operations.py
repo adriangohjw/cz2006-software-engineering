@@ -26,7 +26,7 @@ def user_read_operation(col, value):
 
     # user is not found
     if user is None:
-        raise ErrorWithCode(404, "No user found")
+        raise ErrorWithCode(409, "No user found")
 
     # success case
     return user
@@ -38,11 +38,11 @@ def user_create_operation(username, plaintext_password, name):
 
     # user existing
     if user is not None:
-        raise ErrorWithCode(412, "Existing user found")
+        raise ErrorWithCode(409, "Existing user found")
 
     user = initialize_user(username, plaintext_password, name)
     if userCreate(user) == False:
-        raise ErrorWithCode(400, "Unsuccessful")
+        raise ErrorWithCode(503, "Unsuccessful")
 
     # success case
     return user
@@ -54,7 +54,7 @@ def user_update_operation(username, name, age, height, weight):
 
     # user is not found
     if user is None:
-        raise ErrorWithCode(404, "No user found")
+        raise ErrorWithCode(409, "No user found")
 
     if name is not None:
         user.name = name
@@ -69,7 +69,7 @@ def user_update_operation(username, name, age, height, weight):
         user.weight = weight 
 
     if userUpdate() == False:
-        raise ErrorWithCode(400, "Unsuccessful")
+        raise ErrorWithCode(503, "Unsuccessful")
 
     # success case
     return user
@@ -82,7 +82,7 @@ def user_update_password_operation(username, current_password, new_password):
 
     # user is not found
     if user is None:
-        raise ErrorWithCode(404, "No user found")
+        raise ErrorWithCode(409, "No user found")
     
     # incorrect password provided
     if authenticate(current_password, user.encrypted_password) is False:
@@ -90,7 +90,7 @@ def user_update_password_operation(username, current_password, new_password):
 
     user.encrypted_password = encrypt(current_password)
     if userUpdate() == False:
-        raise ErrorWithCode(400, "Unsuccessful")
+        raise ErrorWithCode(503, "Unsuccessful")
 
     # success case
     return user
@@ -102,10 +102,10 @@ def auth_operation(username, password):
 
     # user is not found
     if user is None:
-        raise ErrorWithCode(404, "No user found")
+        raise ErrorWithCode(409, "No user found")
 
     # if password is wrong
-    if authenticate(password, user.encrypted_password):
-        return True
-    else:
-        return False 
+    if not authenticate(password, user.encrypted_password):
+        raise ErrorWithCode(401, "Unauthorised - Incorrect password")
+
+    return True
