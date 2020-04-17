@@ -12,6 +12,7 @@ app = create_app()
 app.app_context().push()
 db.init_app(app)
 
+from models import User
 from operations.user_operations import \
     encrypt, authenticate, initialize_user, \
     user_read_operation, user_create_operation, user_update_operation, \
@@ -86,6 +87,9 @@ class Test_users_operations(unittest.TestCase):
             user_update_password_operation('', 'password', 'password_new')
     
         self.assertIsNotNone(user_update_password_operation('johndoe', 'password', 'password_new'))
+
+        user = User.query.filter_by(username='johndoe').first()
+        self.assertTrue(authenticate('password_new', user.encrypted_password))
 
     
     def test_auth_operation(self):
