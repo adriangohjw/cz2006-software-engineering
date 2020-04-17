@@ -28,7 +28,7 @@ class Test_point_controllers(Test_BaseCase):
         self.assertEqual(response.status_code, 400)
 
         # record not found
-        response = self.app.get('/routes/points?id=3')
+        response = self.app.get('/routes/points?id=5')
         self.assertEqual(response.status_code, 409)
         
         # success case
