@@ -71,9 +71,23 @@ class Test_stat_operations(unittest.TestCase):
         db.session.commit()
 
 
-    
+    def test_daily_calories_read_operations(self):
 
+        with self.assertRaises(ErrorWithCode):
+            daily_calories_read_operations(2)
 
+        import datetime
+        date_today = datetime.date.today()
+        date_today_str = date_today.strftime('%Y-%m-%d')
+
+        self.assertIsNotNone(daily_calories_read_operations(1))
+        self.assertEqual(
+            daily_calories_read_operations(1),
+            {
+                date_today_str: 300
+            }
+        )
+        
 
 if __name__ == '__main__':
     unittest.main()
