@@ -11,9 +11,10 @@ def create_app():
     app.config['TESTING'] = True
     app.url_map.strict_slashes = False
 
-    from blueprints import user_bp, route_bp, algo_bp
+    from blueprints import user_bp, route_bp, algo_bp, stat_bp
     app.register_blueprint(user_bp, url_prefix='/users')
     app.register_blueprint(route_bp, url_prefix='/routes')
     app.register_blueprint(algo_bp, url_prefix='/algo')
+    app.register_blueprint(stat_bp, url_prefix='/stats')
 
     return app
