@@ -28,7 +28,7 @@ class Test_route_controllers(Test_BaseCase):
         self.assertEqual(response.status_code, 400)
 
         # record not found
-        response = self.app.get('/routes?id=2')
+        response = self.app.get('/routes?id=3')
         self.assertEqual(response.status_code, 409)
         
         # success case
@@ -62,7 +62,7 @@ class Test_route_controllers(Test_BaseCase):
         self.assertEqual(response.status_code, 400)
 
         # record not found
-        response = self.app.put('/routes?id=2&calories=100')
+        response = self.app.put('/routes?id=3&calories=100')
         self.assertEqual(response.status_code, 409)
 
         # success case
@@ -79,7 +79,7 @@ class Test_route_controllers(Test_BaseCase):
         self.assertEqual(response.status_code, 400)
 
         # record not found
-        response = self.app.delete('/routes?id=2')
+        response = self.app.delete('/routes?id=3')
         self.assertEqual(response.status_code, 409)
 
         # success case

@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import Api
 
 from controllers import \
-    user_controllers, route_controllers, point_controllers, algo_controllers
+    user_controllers, route_controllers, point_controllers, algo_controllers, stat_controllers
 
 user_bp = Blueprint('user', __name__)
 api_user = Api(user_bp)
@@ -20,3 +20,7 @@ algo_bp = Blueprint('algo', __name__)
 api_algo = Api(algo_bp)
 api_algo.add_resource(algo_controllers.RoutesSearchAlgoAPI, '/routes_search/')
 api_algo.add_resource(algo_controllers.PopularRoutesAlgoAPI, '/popular_routes/')
+
+stat_bp = Blueprint('stat', __name__)
+api_stat = Api(stat_bp)
+api_stat.add_resource(stat_controllers.dailyCaloriesAPI, '/daily_calories/')

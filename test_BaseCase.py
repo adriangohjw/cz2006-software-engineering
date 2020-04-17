@@ -52,5 +52,19 @@ class Test_BaseCase(unittest.TestCase):
             endPos_longtitude=50.0
         )
         db.session.add(route_1)
+        route_2 = initialize_route(
+            user_id=1,
+            distance=10,
+            polyline=20,
+            purpose='Casual',
+            calories=60,
+            ascent=1,
+            descent=2,
+            startPos_latitude=40.0,
+            startPos_longtitude=50.0,
+            endPos_latitude=40.0,
+            endPos_longtitude=50.0
+        )
+        db.session.add(route_2)
 
         db.session.commit()
