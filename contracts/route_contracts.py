@@ -25,10 +25,6 @@ def validate_distance(distance):
     if (distance is None):
         raise TypeError("Request params (distance) not found")
 
-    # if description params is empty
-    if not distance: 
-        distance=0
-
     # if not integer
     if not isinstance(distance, int):
         raise TypeError("distance is not int")
@@ -62,10 +58,6 @@ def validate_calories(calories):
     if (calories is None):
         raise TypeError("Request params (calories) not found")
 
-    # if description params is empty
-    if not calories: 
-        calories=0
-
     # if not integer
     if not isinstance(calories, int):
         raise TypeError("calories is not integer")
@@ -77,10 +69,6 @@ def validate_ascent(ascent):
     if (ascent is None):
         raise TypeError("Request params (ascent) not found")
 
-    # if description params is empty
-    if not ascent: 
-        ascent=0
-
     # if not integer
     if not isinstance(ascent, int):
         raise TypeError("ascent is not int")
@@ -91,10 +79,6 @@ def validate_descent(descent):
     # if not found in params
     if (descent is None):
         raise TypeError("Request params (ascent) not found")
-
-    # if description params is empty
-    if not descent: 
-        descent=0
 
     # if not integer
     if not isinstance(descent, int):
@@ -127,12 +111,31 @@ def route_create_contract(request):
     endPos_longtitude = request.args.get('endPos_longtitude', type=float)
 
     validate_user_username(username)
-    validate_distance(distance)
+
+    if distance is not None:
+        validate_distance(distance)
+    else:
+        distance = 0
+
     validate_purpose(purpose)
-    validate_calories(calories)
+    
+    if calories is not None:
+        validate_calories(calories)
+    else:
+        calories = 0
+
     validate_polyline(polyline)
-    validate_ascent(ascent)
-    validate_descent(descent)
+    
+    if ascent is not None:
+        validate_ascent(ascent)
+    else:
+        ascent = 0
+
+    if descent is not None:
+        validate_descent(descent)
+    else:
+        descent = 0
+
     validate_latitude(startPos_latitude)
     validate_longtitude(startPos_longtitude)
     validate_latitude(endPos_latitude)
@@ -140,12 +143,12 @@ def route_create_contract(request):
 
     return {
         'username': username,
-        'distance': int(distance),
+        'distance': distance,
         'purpose': purpose,
-        'calories': int(calories),
+        'calories': calories,
         'polyline': polyline,
-        'ascent': int(ascent),
-        'descent': int(descent),
+        'ascent': ascent,
+        'descent': descent,
         'startPos_latitude': float(startPos_latitude),
         'startPos_longtitude': float(startPos_longtitude),
         'endPos_latitude': float(endPos_latitude),
