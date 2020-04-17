@@ -521,35 +521,3 @@ Future<bool> getid(String uname, String pcode, BuildContext context) async {
   return true;
   
 }
-
-
-// Future<User> fetchPostCreateUser() async {
-//   final response = await http.put(
-//       'http://localhost:3333/users/?age=${age.text}&height=${height.text}&weight=${weight.text}&username=${username.text}');
-
-//   if (response.statusCode == 200) {
-//     // If the call to the server was successful (returns OK), parse the JSON.
-//     return User.fromJson(json.decode(response.body));
-//   } else {
-//     // If that call was not successful (response was unexpected), it throw an error.
-//     throw Exception('Failed to load post');
-//   }
-// }
-
-// class User {
-//   final String name;
-//   final String username;
-//   final int id;
-
-//   final String password;
-
-//   User({this.id, this.name, this.username, this.password});
-
-//   factory User.fromJson(Map<String, dynamic> json) {
-//     return User(
-//       id: json['id'],
-//       username: json['username'],
-//       name: json['name'],
-//     );
-//   }
-// }

@@ -88,7 +88,7 @@ def user_update_password_operation(username, current_password, new_password):
     if authenticate(current_password, user.encrypted_password) is False:
         raise ErrorWithCode(401, "Wrong password provided")
 
-    user.encrypted_password = encrypt(current_password)
+    user.encrypted_password = encrypt(new_password)
     if userUpdate() == False:
         raise ErrorWithCode(503, "Unsuccessful")
 

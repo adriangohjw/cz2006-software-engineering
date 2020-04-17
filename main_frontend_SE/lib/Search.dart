@@ -98,7 +98,6 @@ class _MyAppState extends State<Search> {
                               mode: Mode.overlay);
                           _startloc.text = p.description;
                           var loc = displayPrediction(p);
-                          print(loc);
                         },
                         decoration: InputDecoration(
                           labelText: "Start Location...",

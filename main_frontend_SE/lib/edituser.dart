@@ -1,4 +1,6 @@
+import 'package:bicycle/SearchResults.dart';
 import 'package:flutter/material.dart';
+import 'main.dart';
 import 'profile.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -14,16 +16,17 @@ final weight = TextEditingController();
 class EditUser extends StatefulWidget {
   @override
   final DataUser dataUser;
-  EditUser({this.dataUser});
+  var poproutes;
+  EditUser({@required this.dataUser,@required this.poproutes});
 
-  @override
-  _EditUserState createState() => _EditUserState();
+  //@override
+  _EditUserState createState() => _EditUserState(popRo: poproutes);
 }
 
 class _EditUserState extends State<EditUser> {
   Future<User> post;
-  var userID;
-  var personDet;
+  var popRo;
+  _EditUserState({@required this.popRo});
   @override
   void initState() {
     super.initState();
@@ -185,10 +188,10 @@ class _EditUserState extends State<EditUser> {
                       ),
                       RaisedButton(
                         onPressed: () async {
-                          fetchPut();
+                          await fetchPut();
                           List l= await getDet();
                           Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => ProfilePage(id: l[0], PersDet: l[1],)),
+                      MaterialPageRoute(builder: (context) => MyHomePage(id: l[0], profDetails: l[1],popRoutes: popRo,)),
                     );
                         },
                         color: Colors.white,
@@ -224,13 +227,13 @@ Future fetchPut() async {
     //return User.fromJson(json.decode(response.body));
   } else {
     // If that call was not successful (response was unexpected), it throw an error.
-    throw Exception('Failed to load post');
+    throw Exception('Failed to load put');
   }
 }
 
 Future<User> fetchPost() async {
   final response = await http
-      .get('http://localhost:3333/users/?username=${dataUser.username}');
+      .get('http://localhost:3333/users/?username=${username.text}');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful (returns OK), parse the JSON.
@@ -245,7 +248,7 @@ Future<List> getDet() async {
   var personDet=[];
   var userID;
   var l=[];
-  var response1 = await http.get('http://localhost:3333/users/?username='+dataUser.username);
+  var response1 = await http.get('http://localhost:3333/users/?username='+username.text);
   if (response1.statusCode==200)
   {
   personDet.add(( await json.decode(response1.body))['username']);

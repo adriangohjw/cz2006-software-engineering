@@ -87,13 +87,10 @@ class RecommenderState extends State<MyRecommPage> {
   Widget build(BuildContext context) {
     if (maxDist != null) {
       _textcontrollerdist.text = maxDist.toString();
-      print('hello1');
     }
     if (minCal != null) {
       _textcontrollercalo.text = minCal.toString();
-      print('hello2');
     }
-    print('nothing');
 
     return loading
         ? LoadingPage()
@@ -157,9 +154,16 @@ class RecommenderState extends State<MyRecommPage> {
                         border: OutlineInputBorder(),
                         labelText: 'Max Distance (Kms)',
                       ),
-                      onSubmitted: (String value) {
+                      onChanged: (String value){
+                        if(value==''){
+                          maxDist = null;
+                          _textcontrollerdist.text = null;
+                        }
+                        else{
                         maxDist = double.parse(value);
                         _textcontrollerdist.text = value;
+                        _textcontrollerdist.selection=TextSelection.collapsed(offset:_textcontrollerdist.text.length);
+                        }
                       },
                     ),
                   ),
@@ -173,11 +177,19 @@ class RecommenderState extends State<MyRecommPage> {
                         border: OutlineInputBorder(),
                         labelText: 'Total Calories to burn (KCal))',
                       ),
-                      onSubmitted: (String value) {
-                        minCal = double.parse(value).round();
-                        _textcontrollercalo.text =
-                            value; // Should update to database only if the tick button is clicked.
+                      
+                      onChanged: (String value){
+                        if(value==''){
+                          minCal = null;
+                          _textcontrollercalo.text = null;
+                        }
+                        else{
+                        minCal = int.parse(value);
+                        _textcontrollercalo.text = value;
+                        _textcontrollercalo.selection=TextSelection.collapsed(offset:_textcontrollercalo.text.length);
+                        }
                       },
+                      
                     ),
                   ),
                   Container(
@@ -196,7 +208,6 @@ class RecommenderState extends State<MyRecommPage> {
                               setState(() => loading = true);
                               var SearchResultsLat = await getSearchResults();
                               setState(() => loading = false);
-                            
                               if (_textcontrollerdist.text == '' &&
                                   _textcontrollercalo.text == '') {
                                 
@@ -362,7 +373,6 @@ class RecommenderState extends State<MyRecommPage> {
 
   Widget _mapfunc(BuildContext context, int index) {
     
-    print(searchOutput[1]);
 
     final polyline = searchOutput[9];
     final routeAsc = searchOutput[1];
@@ -720,10 +730,6 @@ class RecommenderState extends State<MyRecommPage> {
     searchAttr.add(searchAttr[3]);
     searchAttr.add(searchAttr[4]);
     searchAttr.add(searchAttr[5]);
-    print("YEEEEEEEE");
-    print(_textcontrollerdist.text);
-    print(_textcontrollercalo.text);
-    print(searchAttr[4]);
     if ((_textcontrollerdist.text) != "") {
       url = url + '&max_dist=' + _textcontrollerdist.text;
     }
@@ -735,7 +741,6 @@ class RecommenderState extends State<MyRecommPage> {
 
     if (response3.statusCode == 200) {
       var UpdatedSearchResults = (json.decode(response3.body));
-      print(UpdatedSearchResults[2]);
       return UpdatedSearchResults;
     } else {
       throw Exception('Failed to load results');
