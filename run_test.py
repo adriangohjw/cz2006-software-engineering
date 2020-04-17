@@ -7,5 +7,13 @@ def create_app():
     CORS(app)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = ConfigTest.URI
+    app.config['DEBUG'] = True
+    app.config['TESTING'] = True
+    app.url_map.strict_slashes = False
+
+    from blueprints import user_bp, route_bp, algo_bp
+    app.register_blueprint(user_bp, url_prefix='/users')
+    app.register_blueprint(route_bp, url_prefix='/routes')
+    app.register_blueprint(algo_bp, url_prefix='/algo')
 
     return app

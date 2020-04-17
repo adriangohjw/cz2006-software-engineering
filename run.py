@@ -7,6 +7,7 @@ def create_app():
     CORS(app)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = Config.URI
+    app.url_map.strict_slashes = False
 
     return app
 

@@ -18,7 +18,7 @@ def point_read_operation(point_id):
 
     # point is not found
     if point is None:
-        raise ErrorWithCode(404, "No point found")
+        raise ErrorWithCode(409, "No point found")
 
     # success case
     return point
@@ -28,7 +28,7 @@ def point_create_operation(latiitude, longtitude):
 
     point = initialize_point(latiitude, longtitude)
     if pointCreate(point) == False:
-        raise ErrorWithCode(400, "Unsuccessful")
+        raise ErrorWithCode(503, "Unsuccessful")
 
     # success case
     return point

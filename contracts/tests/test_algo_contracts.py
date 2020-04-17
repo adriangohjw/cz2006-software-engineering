@@ -13,7 +13,7 @@ db.init_app(app)
 
 from contracts.algo_contracts import \
     validate_fit_level, validate_route_id, \
-    routes_search_algo_contracts, popular_routes_algo_contracts, live_stats_algo_contracts
+    routes_search_algo_contracts, popular_routes_algo_contracts
 
 
 class Test_algo_contracts(unittest.TestCase):
@@ -51,7 +51,9 @@ class Test_algo_contracts(unittest.TestCase):
                     'start': '1.0, 2.0',
                     'end': '3.0, 4.0',
                     'fit_level': 5,
-                    'weight': 60
+                    'weight': 60,
+                    'max_dist': None,
+                    'cal': None
                 }
             )
 
@@ -83,26 +85,6 @@ class Test_algo_contracts(unittest.TestCase):
 
         with app.test_request_context('/?weight=hello', method='GET'):
             self.assertRaises(TypeError, popular_routes_algo_contracts, request)
-
-
-    def test_live_stats_algo_contracts(self):
-
-        with app.test_request_context('/?route_id=1', method='GET'):
-            self.assertEqual(
-                live_stats_algo_contracts(request), 
-                {
-                    'route_id': 1
-                }
-            )
-
-        with app.test_request_context('/', method='GET'):
-            self.assertRaises(TypeError, live_stats_algo_contracts, request)
-
-        with app.test_request_context('/?route_id=', method='GET'):
-            self.assertRaises(TypeError, live_stats_algo_contracts, request)
-
-        with app.test_request_context('/?route_id=hello', method='GET'):
-            self.assertRaises(TypeError, live_stats_algo_contracts, request)
 
 
 if __name__ == '__main__':

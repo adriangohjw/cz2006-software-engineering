@@ -90,7 +90,7 @@ def validate_descent(descent):
 
     # if not found in params
     if (descent is None):
-        descent=0.0
+        raise TypeError("Request params (ascent) not found")
 
     # if description params is empty
     if not descent: 

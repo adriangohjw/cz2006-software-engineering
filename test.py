@@ -17,5 +17,9 @@ from dao.tests.test_user_dao import Test_user_dao
 from dao.tests.test_route_dao import Test_route_dao
 from dao.tests.test_point_dao import Test_point_dao
 
+from controllers.tests.test_user_controllers import Test_user_controllers
+from controllers.tests.test_route_controllers import Test_route_controllers
+from controllers.tests.test_point_controllers import Test_point_controllers
+
 if __name__ == '__main__':
     unittest.main()
