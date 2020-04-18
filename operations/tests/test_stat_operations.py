@@ -84,7 +84,10 @@ class Test_stat_operations(unittest.TestCase):
         self.assertEqual(
             daily_calories_read_operations(1),
             {
-                date_today_str: 300
+                date_today_str: {
+                    'total_calories': 300,
+                    'total_distance': 20
+                }
             }
         )
         

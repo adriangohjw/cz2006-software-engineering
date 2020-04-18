@@ -17,6 +17,9 @@ def daily_calories_read_operations(user_id):
     for item in raw_stats:
         i_dict = item._asdict()
         date_str = str(i_dict['Date'])
-        stat_dict[date_str] = i_dict['total_calories']
+        stat_dict[date_str] = {
+            'total_calories': i_dict['total_calories'],
+            'total_distance': i_dict['total_distance']
+        }
 
     return stat_dict
