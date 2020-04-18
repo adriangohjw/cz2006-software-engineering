@@ -79,7 +79,7 @@ class Test_stat_dao(unittest.TestCase):
         self.assertEqual(
             dailyCaloriesRead(1),
             [
-                (datetime.date(date_today.year, date_today.month, date_today.day), 300)
+                (datetime.date(date_today.year, date_today.month, date_today.day), 300, 20)
             ]
         )
 
