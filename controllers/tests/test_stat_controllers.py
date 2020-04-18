@@ -38,7 +38,8 @@ class Test_stat_controllers(Test_BaseCase):
         response = self.app.get('/stats/daily_calories?user_id=1')
         res = res_to_dict(response)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(res[date_today_str], 90)
+        self.assertEqual(res[date_today_str]['total_calories'], 90)
+        self.assertEqual(res[date_today_str]['total_distance'], 20)
 
 
 if __name__ == '__main__':

@@ -14,7 +14,8 @@ def dailyCaloriesRead(user_id):
 
     query = db.session.query(
         cast(Route.created_at, Date).label('Date'),
-        sum(Route.calories).label('total_calories')
+        sum(Route.calories).label('total_calories'),
+        sum(Route.distance).label('total_distance')
     )\
     .filter(Route.user_id == user_id)\
     .group_by(
