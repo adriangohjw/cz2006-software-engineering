@@ -55,6 +55,12 @@ If you face error, delete the folder "migrations" and try the above steps again.
 ## To run the application
 `python run.py`
 
+## To populate the database with mock data
+`python db_populate\db_populate.py`
+
+- WARNING: It will wipe the entire local test DB clean, before populating it with mock data
+- To populate in local actual DB, replace `from run_test import create_app` with `from run import create_app`, save the file and execute the same command
+
 ## Testing API endpoints
 
 Postman is a Collaboration Platform for API Development
