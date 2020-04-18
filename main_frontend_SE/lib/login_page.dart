@@ -511,6 +511,12 @@ Future<bool> getid(String uname, String pcode, BuildContext context) async {
         return false;
       }
     }
+    else {
+    loginfail = true;
+
+    print('Username or Password is wrong');
+    return false;
+  }
     
   } else {
     loginfail = true;

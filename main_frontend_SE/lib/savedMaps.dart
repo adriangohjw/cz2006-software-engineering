@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'loadingPage.dart';
 import 'package:http/http.dart' as http;
+import 'package:google_fonts/google_fonts.dart';
 
 // void main() {
 //   runApp(MyApp());
@@ -15,7 +16,6 @@ import 'package:http/http.dart' as http;
 const double CAMERA_ZOOM = 14;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
-
 
 // class MyApp extends StatelessWidget {
 //   @override
@@ -31,16 +31,17 @@ class SavedMap extends StatefulWidget {
   int id;
   var pastroutes;
   SavedMap({@required this.id, @required this.pastroutes});
-  State<StatefulWidget> createState() => SavedMapsCard(userid: id, searchOutput:pastroutes);
+  State<StatefulWidget> createState() =>
+      SavedMapsCard(userid: id, searchOutput: pastroutes);
 }
 
 class SavedMapsCard extends State<SavedMap> {
-  int userid; 
+  int userid;
   var searchOutput;
-  SavedMapsCard({@required this.userid, @required this.searchOutput});  
-  
+  SavedMapsCard({@required this.userid, @required this.searchOutput});
+
   GoogleMapController mapController;
-  var searchAttr=[];
+  var searchAttr = [];
   List<Set> poly = [];
   List<Set> mark = [];
   Set<Marker> _markers = {};
@@ -50,53 +51,77 @@ class SavedMapsCard extends State<SavedMap> {
   BitmapDescriptor destinationIcon;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool loading = false;
-  
+
   TextEditingController _textcontrollerdist = new TextEditingController();
   TextEditingController _textcontrollercalo = new TextEditingController();
   //bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return loading ? LoadingPage : Scaffold(
-      resizeToAvoidBottomPadding: false,
-      resizeToAvoidBottomInset: false,
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          'Past Rides',
-          style: TextStyle(
-            color: Colors.black,
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-          splashColor: Colors.black.withAlpha(30),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Center(
-              child: Container(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  children: <Widget>[
-                    for (var i = 0; i < searchOutput.length; i++) _mapfunc(context, i),
-                  ],
+    return loading
+        ? LoadingPage
+        : Scaffold(
+            resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: false,
+            key: _scaffoldKey,
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                'Past Rides',
+                style: TextStyle(
+                  color: Colors.black,
                 ),
               ),
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
+                splashColor: Colors.black.withAlpha(30),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+            body: (searchOutput.length == 0)
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Spacer(flex: 1),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: EdgeInsets.only(right: 30, left: 30),
+                          alignment: Alignment.center,
+                          child: Text(
+                              "You haven't completed any rides. Time to complete a ride now!",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lora(
+                                  color: Colors.black,
+                                  fontStyle: FontStyle.italic)),
+                        ),
+                      ),
+                      Spacer(flex: 1),
+                    ],
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            child: Column(
+                              children: <Widget>[
+                                for (var i = 0; i < searchOutput.length; i++)
+                                  _mapfunc(context, i),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          );
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -123,9 +148,9 @@ class SavedMapsCard extends State<SavedMap> {
     //var locs = getmarkerPoints(searchOutput);
     print("yeee");
     final startLocs = LatLng(searchOutput[index]["startPos"]['latitude'],
-            searchOutput[index]["startPos"]['longtitude']);
+        searchOutput[index]["startPos"]['longtitude']);
     final endLocs = LatLng(searchOutput[index]["endPos"]['latitude'],
-            searchOutput[index]["endPos"]['longtitude']);
+        searchOutput[index]["endPos"]['longtitude']);
     print(startLocs);
     print(endLocs);
     setMapPins(startLocs, endLocs);
@@ -141,8 +166,7 @@ class SavedMapsCard extends State<SavedMap> {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         splashColor: Colors.blue.withAlpha(30),
-        onTap: () {
-        },
+        onTap: () {},
         child: Container(
           width: 500,
           height: 300,
@@ -176,7 +200,7 @@ class SavedMapsCard extends State<SavedMap> {
                           tilt: CAMERA_TILT,
                           target: LatLng(
                               searchOutput[index]["endPos"]['latitude'],
-            searchOutput[index]["endPos"]['longtitude'])),
+                              searchOutput[index]["endPos"]['longtitude'])),
                       onMapCreated: (controller) {
                         setState(() {
                           mapController = controller;
@@ -215,8 +239,9 @@ class SavedMapsCard extends State<SavedMap> {
                         Expanded(
                           child: Container(
                             alignment: Alignment.center,
-                            child: Text('Distance: '+
-                              routeDist[index].toStringAsFixed(1) +
+                            child: Text(
+                              'Distance: ' +
+                                  routeDist[index].toStringAsFixed(1) +
                                   ' Km', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -231,12 +256,12 @@ class SavedMapsCard extends State<SavedMap> {
                             ),
                           ),
                         ),
-                        
                         Expanded(
                           child: Container(
                             alignment: Alignment.center,
-                            child: Text('Calories: '+
-                              routeCal[index].round().toString() +
+                            child: Text(
+                              'Calories: ' +
+                                  routeCal[index].round().toString() +
                                   ' KCal', // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -311,9 +336,8 @@ class SavedMapsCard extends State<SavedMap> {
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
-                              
-                                  routeTime[index].substring(0,16)
-                                  , // this is a random value. original value must be extracted from database / route detail and replaced here
+                              routeTime[index].substring(0,
+                                  16), // this is a random value. original value must be extracted from database / route detail and replaced here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -359,8 +383,7 @@ class SavedMapsCard extends State<SavedMap> {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
-                                        routeFit[index]
-                                            ,
+                                        routeFit[index],
                                         style: TextStyle(
                                           color: Colors.white,
                                         ),
@@ -399,7 +422,7 @@ class SavedMapsCard extends State<SavedMap> {
       mark.add(_markers);
     });
   }
-    
+
   setPolylines(String pol, List<LatLng> polylineCoordinates,
       PolylinePoints polylinePoints) async {
     // List<PointLatLng> result = await polylinePoints?.getRouteBetweenCoordinates(
@@ -434,17 +457,15 @@ class SavedMapsCard extends State<SavedMap> {
       poly.add(_polylines);
     });
   }
-  List getAttr(routes, String attr){
+
+  List getAttr(routes, String attr) {
     print("HELLLLLLLLLLLLOOOOOO");
-    var lst=[];
-    int l = (routes.length)-1;
-    for(int i=0;i<=l;i++){
+    var lst = [];
+    int l = (routes.length) - 1;
+    for (int i = 0; i <= l; i++) {
       lst.add(routes[i][attr]);
     }
     print(lst);
     return lst;
-    
   }
-
-  
 }

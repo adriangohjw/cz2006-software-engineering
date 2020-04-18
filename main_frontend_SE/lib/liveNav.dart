@@ -132,7 +132,6 @@ class MapPageState extends State<LiveNav> {
 
   @override
   Widget build(BuildContext context) {
-    display_distance=routeDet[1];
     CameraPosition initialCameraPosition = CameraPosition(
         zoom: CAMERA_ZOOM,
         tilt: CAMERA_TILT,
@@ -147,12 +146,13 @@ class MapPageState extends State<LiveNav> {
     }
     return Scaffold(
       body: SlidingUpPanel(
-        minHeight: 50,
-        maxHeight: 200,
+        minHeight: 100,
+        maxHeight: 250,
         panel: Column(
           children: <Widget>[
             Container(
               height: 50,
+              width: 500,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -166,7 +166,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "$displaydistance", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "Dist Travelled: "+" "+"$displaydistance km", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -174,6 +174,7 @@ class MapPageState extends State<LiveNav> {
                       ),
                     ),
                   ),
+                  
                   Expanded(
                     child: Container(
                       alignment: Alignment.center,
@@ -184,7 +185,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "$display_distance", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "Dist Remaining: "+" "+"$display_distance km", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -192,6 +193,15 @@ class MapPageState extends State<LiveNav> {
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+                  Container(
+                    width: 500,
+                    height: 50,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
                   Expanded(
                     child: Container(
                       alignment: Alignment.center,
@@ -202,7 +212,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "$stoptimetodisplay", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "Time:"+" "+"$stoptimetodisplay", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -219,7 +229,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "$displaycal", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "Calories: "+"$displaycal kCal", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -254,7 +264,7 @@ class MapPageState extends State<LiveNav> {
                       alignment: Alignment.centerLeft,
                       padding: EdgeInsets.only(left: 30),
                       child: Text(
-                        "$displayspeed", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displayspeed km/hr", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontSize: 25,
                         ),
@@ -295,7 +305,7 @@ class MapPageState extends State<LiveNav> {
                       alignment: Alignment.centerLeft,
                       padding: EdgeInsets.only(left: 30),
                       child: Text(
-                        "$displayascent", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displayascent km", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontSize: 25,
                         ),
@@ -335,7 +345,7 @@ class MapPageState extends State<LiveNav> {
                       padding: EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "$displaydescent", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "$displaydescent km", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontSize: 25,
                         ),
@@ -397,7 +407,7 @@ class MapPageState extends State<LiveNav> {
                   ],
                 ),
                 Spacer(
-                  flex: 16,
+                  flex: 8,
                 ),
                 Row(
                   children: <Widget>[
@@ -460,7 +470,7 @@ class MapPageState extends State<LiveNav> {
                     Spacer(),
                   ],
                 ),
-                Spacer(),
+                Spacer(flex: 2,),
                 Container(
                   height: 50,
                 ),
@@ -642,6 +652,7 @@ void _currentLocation() async {
     ));
   }
   Future _location() async{
+   double distance1=0.0;
    Location location = Location();
     location.onLocationChanged.listen((LocationData value) {
       if(ispressed==0){
@@ -651,6 +662,9 @@ void _currentLocation() async {
         displayspeed=speed.toStringAsFixed(2).toString();
         distance+=(speed*timeinhrs);
         displaydistance=distance.toStringAsFixed(2);
+        distance1=double.parse(routeDet[1])-distance;
+        display_distance=distance1.toStringAsFixed(2).toString();
+
         calorieCalculator(speed, distance);
         getdetails(routeDet[8], distance);
 
@@ -719,8 +733,8 @@ void getdetails(List a,double distance){
      if(distance>a[i][0]&&(distance<a[i+1][0])){
             b=i+1;
             setState(() {
-            ascent=a[b][1];
-            descent=a[b][2];
+            ascent=ascent+a[b][1];
+            descent=descent+a[b][2];
             flat=distance-(ascent+descent);
             displayascent=ascent.toStringAsFixed(2).toString();
             displaydescent=descent.toStringAsFixed(2).toString();

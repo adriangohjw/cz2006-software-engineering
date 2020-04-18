@@ -28,7 +28,7 @@ class LoadingPage extends StatelessWidget {
     'Bicycles can have more than one seat. Most popular configuration is two-seater tandem bike, but record holder is 67 feet long bicycle that was driven by 35 people.',
     'In 2011, Austrian racing cyclist Markus Stöckl drove an ordinary bicycle down the hill of a volcano. He attained the speed of 164.95 km/h.',
     'One car parking space can hold between 6 and 20 parked bicycles.',
-    'First rear-wheel powered bicycle design was created by the Scottish blacksmith Kirkpatrick Macmillan.',
+    'First rear-wheel powered bicycle design was created by the Scottish blacksmith Kirkpatrick.',
     'Fastest speed attained on bicycle that was driven on flat terrain with the help of pace car that removed wind turbulence was 268 km/h. This was achieved by Fred Rompelberg in 1995.',
     'Over 90% of all bicycle trips are shorter than 15 kilometers.',
     'Daily 16 kilometer ride (10 miles) burns 360 calories, saves up to 10 euros of budget and saves the environment from 5 kilos of carbon dioxide emissions that are produced by cars.',

@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 final username = TextEditingController();
 final newpassword = TextEditingController();
 final oldpassword = TextEditingController();
+bool passwrong = false;
 
 class EditPassword extends StatefulWidget {
   @override
@@ -93,6 +94,7 @@ class _EditPasswordState extends State<EditPassword> {
                         border: InputBorder.none,
                         fillColor: Colors.lightBlueAccent,
                         labelText: 'Old Password',
+                        errorText: passwrong ? 'Old Password Incorrect' : null,
                         labelStyle: TextStyle(
                           color: Colors.white70,
                         ),
@@ -144,11 +146,21 @@ class _EditPasswordState extends State<EditPassword> {
                       ),
                       RaisedButton(
                         onPressed: () async {
-                          await fetchPutPassword();
-                          List l= await getDet();
-                          Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => MyHomePage(id: l[0], profDetails: l[1],popRoutes: pops,)),
-                    );
+                          bool checks = await fetchPutPassword();
+                          if (checks) {
+                            List l = await getDet();
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(
+                                  id: l[0],
+                                  profDetails: l[1],
+                                  popRoutes: pops,
+                                ),
+                              ),
+                            );
+                          } else {
+                            passwrong = true;
+                          }
                         },
                         color: Colors.white,
                         child: Padding(
@@ -171,24 +183,25 @@ class _EditPasswordState extends State<EditPassword> {
     );
   }
 }
+
 // connecting to back end
-Future<List> getDet() async {  
-  var personDet=[];
+Future<List> getDet() async {
+  var personDet = [];
   var userID;
-  var l=[];
-  var response1 = await http.get('http://localhost:3333/users/?username='+username.text);
-  if (response1.statusCode==200)
-  {
-  personDet.add(( await json.decode(response1.body))['username']);
-  personDet.add(( await json.decode(response1.body))['name']);
-  personDet.add(( await json.decode(response1.body))['age']);
-  personDet.add(( await json.decode(response1.body))['height']);
-  personDet.add(( await json.decode(response1.body))['weight']);
-  userID = await ( json.decode(response1.body))['id'];
-  l.add(userID);
-  l.add(personDet);
-  return l;
-  } else{
+  var l = [];
+  var response1 =
+      await http.get('http://localhost:3333/users/?username=' + username.text);
+  if (response1.statusCode == 200) {
+    personDet.add((await json.decode(response1.body))['username']);
+    personDet.add((await json.decode(response1.body))['name']);
+    personDet.add((await json.decode(response1.body))['age']);
+    personDet.add((await json.decode(response1.body))['height']);
+    personDet.add((await json.decode(response1.body))['weight']);
+    userID = await (json.decode(response1.body))['id'];
+    l.add(userID);
+    l.add(personDet);
+    return l;
+  } else {
     throw Exception('Failed to load details');
   }
   // l.add(userID);
@@ -196,22 +209,24 @@ Future<List> getDet() async {
   // return l;
 }
 
-Future<User> fetchPutPassword() async {
+Future<bool> fetchPutPassword() async {
   final response = await http.put(
       'http://localhost:3333/users/password/?username=${username.text}&current_password=${oldpassword.text}&new_password=${newpassword.text}');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful (returns OK), parse the JSON.
-    return User.fromJson(json.decode(response.body));
+    //return User.fromJson(json.decode(response.body));
+    return true;
   } else {
     // If that call was not successful (response was unexpected), it throw an error.
+    return false;
     throw Exception('Failed to load put');
   }
 }
 
 Future<User> fetchPost() async {
-  final response = await http
-      .get('http://127.0.0.1:5000/users/?username=${username.text}');
+  final response =
+      await http.get('http://127.0.0.1:5000/users/?username=${username.text}');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful (returns OK), parse the JSON.
