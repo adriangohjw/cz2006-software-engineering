@@ -45,7 +45,9 @@ class Test_route_dao(unittest.TestCase):
         self.assertEqual(len(Route.query.all()), 0)
 
         route = Route(1, 10, 'test', 'casual', 200, 20, 30, 1, 2)
-        routeCreate(route)
+        
+        # record successfully created
+        self.assertTrue(routeCreate(route))
 
         self.assertEqual(len(Route.query.all()), 1)
 

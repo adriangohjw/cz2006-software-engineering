@@ -6,7 +6,7 @@ import unittest
 
 from exceptions import ErrorWithCode
 
-from models import db
+from models import db, Point
 from run_test import create_app
 app = create_app()
 app.app_context().push()
@@ -37,14 +37,18 @@ class Test_point_operations(unittest.TestCase):
         with self.assertRaises(ErrorWithCode):
             point_read_operation(2)
 
-        self.assertIsNotNone(point_read_operation(1))
+        res = point_read_operation(1)
+        self.assertIsNotNone(res)
+        self.assertEqual(type(res), Point)
+        self.assertEqual(res.latitude, 10.0)
 
     
     def test_point_create_operation(self):
         
-        self.assertIsNotNone(point_create_operation(10.0, 20.0))
+        self.assertEqual(point_create_operation(10.0, 20.0).id, 2)
         self.assertEqual(point_create_operation(10.0, 20.0).latitude, 10.0)
         self.assertEqual(point_create_operation(10.0, 20.0).longtitude, 20.0)
+        self.assertIsNotNone(point_create_operation(10.0, 20.0))
 
 
 if __name__ == '__main__':

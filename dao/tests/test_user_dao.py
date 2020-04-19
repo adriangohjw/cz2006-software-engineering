@@ -34,7 +34,9 @@ class Test_user_dao(unittest.TestCase):
         self.assertEqual(len(User.query.all()), 0)
 
         user = User('johndoe', encrypt('password'), 'John Doe')
-        userCreate(user)
+
+        # successfully added record
+        self.assertTrue(userCreate(user))
 
         self.assertEqual(len(User.query.all()), 1)
 
@@ -58,7 +60,9 @@ class Test_user_dao(unittest.TestCase):
         db.session.commit()
 
         user.name = 'John Doe Tan'
-        userUpdate()
+        
+        # successfully added record
+        self.assertTrue(userUpdate())
 
         self.assertEqual(User.query.filter_by(username='johndoe').first().name, 'John Doe Tan')
         

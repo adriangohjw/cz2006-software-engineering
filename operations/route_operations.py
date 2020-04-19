@@ -39,6 +39,7 @@ def route_create_operation(
 
     user = userRead(col='username', value=username)
 
+    # if dependency record is not found
     if user is None:
         raise ErrorWithCode(409, "No user found")
 

@@ -28,7 +28,9 @@ class Test_user_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_id(None)
-            validate_id(1)
+            validate_id(1.1)
+            validate_id(True)
+            validate_id('hello')
 
         with self.assertRaises(ValueError):
             validate_id('')
@@ -65,7 +67,9 @@ class Test_user_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_age(None)
-            validate_age(1)
+            validate_age(1.1)
+            validate_age(True)
+            validate_age('hello')
 
         with self.assertRaises(ValueError):
             validate_age('')
@@ -75,7 +79,9 @@ class Test_user_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_height(None)
-            validate_height(1)
+            validate_height(1.1)
+            validate_height(True)
+            validate_height('hello')
 
         with self.assertRaises(ValueError):
             validate_height('')
@@ -85,7 +91,9 @@ class Test_user_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_weight(None)
-            validate_weight(1)
+            validate_weight(1.1)
+            validate_weight(True)
+            validate_weight('hello')
 
         with self.assertRaises(ValueError):
             validate_weight('')
