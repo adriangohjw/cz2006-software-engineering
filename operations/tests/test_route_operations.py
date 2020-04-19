@@ -46,7 +46,9 @@ class Test_route_operations(unittest.TestCase):
         with self.assertRaises(ErrorWithCode):
             route_read_operation(2)
 
-        self.assertIsNotNone(route_read_operation(1))
+        res = route_read_operation(1)
+        self.assertIsNotNone(res)
+        self.assertEqual(res.distance, 10)
 
 
     def test_route_create_operation(self):
@@ -57,19 +59,12 @@ class Test_route_operations(unittest.TestCase):
                 startPos_latitude = 30.0, startPos_longtitude = 40.0, endPos_latitude = 50.0, endPos_longtitude = 60.0
             )
 
-        self.assertEqual(
-            route_create_operation(
-                username = 'johndoe', distance = 10, polyline = 'test', purpose = 'casual', calories = 200, ascent = 2, descent = 3,
-                startPos_latitude = 30.0, startPos_longtitude = 40.0, endPos_latitude = 50.0, endPos_longtitude = 60.0
-            ).id, 2
+        res = route_create_operation(
+            username = 'johndoe', distance = 10, polyline = 'test', purpose = 'casual', calories = 200, ascent = 2, descent = 3,
+            startPos_latitude = 30.0, startPos_longtitude = 40.0, endPos_latitude = 50.0, endPos_longtitude = 60.0
         )
-
-        self.assertIsNotNone(
-            route_create_operation(
-                username = 'johndoe', distance = 10, polyline = 'test', purpose = 'casual', calories = 200, ascent = 2, descent = 3,
-                startPos_latitude = 30.0, startPos_longtitude = 40.0, endPos_latitude = 50.0, endPos_longtitude = 60.0
-            )
-        )
+        self.assertEqual(res.id, 2)
+        self.assertIsNotNone(res)
 
 
     def test_route_update_operation(self):

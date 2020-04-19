@@ -30,7 +30,9 @@ class Test_route_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_id(None)
-            validate_id(1)
+            validate_id(1.1)
+            validate_id(True)
+            validate_id('hello')
 
         with self.assertRaises(ValueError):
             validate_id('')
@@ -40,8 +42,9 @@ class Test_route_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_distance(None)
-            validate_distance(1)
-            validate_distance('')
+            validate_distance(1.1)
+            validate_distance(True)
+            validate_distance('hello')
 
     
     def test_validate_purpose(self):
@@ -66,24 +69,27 @@ class Test_route_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_calories(None)
-            validate_calories(1)
-            validate_calories('')
+            validate_calories(1.1)
+            validate_calories(True)
+            validate_calories('hello')
 
 
     def test_validate_ascent(self):
         
         with self.assertRaises(TypeError):
             validate_ascent(None)
-            validate_ascent(1)
-            validate_ascent('')
+            validate_ascent(1.1)
+            validate_ascent(True)
+            validate_ascent('hello')
 
 
     def test_validate_descent(self):
         
         with self.assertRaises(TypeError):
             validate_descent(None)
-            validate_descent(1)
-            validate_descent('')
+            validate_descent(1.1)
+            validate_descent(True)
+            validate_descent('hello')
 
 
     def test_route_read_contract(self):
