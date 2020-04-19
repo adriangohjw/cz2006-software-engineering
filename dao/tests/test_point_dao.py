@@ -33,7 +33,9 @@ class Test_point_dao(unittest.TestCase):
         self.assertEqual(len(Point.query.all()), 0)
 
         point = Point(10.0, 20.0)
-        pointCreate(point)
+
+        # point successfully created
+        self.assertTrue(pointCreate(point))
 
         self.assertEqual(len(Point.query.all()), 1)
 

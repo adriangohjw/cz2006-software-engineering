@@ -1,5 +1,6 @@
 from flask import request 
 
+from contracts.route_contracts import validate_calories
 from contracts.point_contracts import validate_latitude, validate_longtitude
 from contracts.user_contracts import validate_weight
 
@@ -29,7 +30,6 @@ def validate_fit_level(fit_level):
     if not fit_level: 
         raise ValueError("fit_level is empty")
         
-# if (fit_level is None) and (if not fit_level) mean the same thing
 
 def validate_maxDist(max_dist):
 
@@ -40,23 +40,8 @@ def validate_maxDist(max_dist):
     # if description params is empty
     if not max_dist: 
         raise ValueError("max_dist is empty")
-
         
-        
-def validate_calories(cal):
 
-    # if not found in params
-    if (cal is None):
-        raise TypeError("Request params (cal) not found")
-
-    # if description params is empty
-    if not cal: 
-        raise ValueError("cal is empty")
-
-    # if not integer
-    if not isinstance(cal, int):
-        raise TypeError("cal is not integer")
-        
 def routes_search_algo_contracts(request):
 
     startPos_lat = request.args.get('startPos_lat', type=float)
@@ -98,4 +83,3 @@ def popular_routes_algo_contracts(request):
     return {
         'weight': int(weight)
     }
-

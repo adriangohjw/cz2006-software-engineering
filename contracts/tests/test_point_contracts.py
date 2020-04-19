@@ -27,7 +27,9 @@ class Test_point_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_id(None)
-            validate_id(1)
+            validate_id(1.1)
+            validate_id(True)
+            validate_id('hello')
 
         with self.assertRaises(ValueError):
             validate_id('')
@@ -37,9 +39,6 @@ class Test_point_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_latitude(None)
-            validate_latitude(1.0)
-
-        with self.assertRaises(ValueError):
             validate_latitude('')
 
 
@@ -47,9 +46,6 @@ class Test_point_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_longtitude(None)
-            validate_longtitude(1.0)
-
-        with self.assertRaises(ValueError):
             validate_longtitude('')
 
 

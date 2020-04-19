@@ -76,6 +76,8 @@ class Test_stat_dao(unittest.TestCase):
         date_today = datetime.date.today()
         date_today_str = date_today.strftime('%Y-%m-%d')
 
+        print(dailyCaloriesRead(1))
+
         self.assertEqual(
             dailyCaloriesRead(1),
             [

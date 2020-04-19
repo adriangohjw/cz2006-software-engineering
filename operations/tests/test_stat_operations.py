@@ -80,9 +80,10 @@ class Test_stat_operations(unittest.TestCase):
         date_today = datetime.date.today()
         date_today_str = date_today.strftime('%Y-%m-%d')
 
-        self.assertIsNotNone(daily_calories_read_operations(1))
+        res = daily_calories_read_operations(1)
+        self.assertIsNotNone(res)
         self.assertEqual(
-            daily_calories_read_operations(1),
+            res,
             {
                 date_today_str: {
                     'total_calories': 300,

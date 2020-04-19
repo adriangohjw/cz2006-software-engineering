@@ -12,7 +12,7 @@ app.app_context().push()
 db.init_app(app)
 
 from contracts.algo_contracts import \
-    validate_fit_level, validate_route_id, \
+    validate_fit_level, validate_route_id, validate_maxDist, \
     routes_search_algo_contracts, popular_routes_algo_contracts
 
 
@@ -27,7 +27,9 @@ class Test_algo_contracts(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validate_route_id(None)
-            validate_route_id(1)
+            validate_route_id(1.1)
+            validate_route_id(True)
+            validate_route_id('hello')
 
         with self.assertRaises(ValueError):
             validate_route_id('')
@@ -40,6 +42,15 @@ class Test_algo_contracts(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             validate_fit_level('')
+
+
+    def test_validate_maxDist(self):
+        
+        with self.assertRaises(TypeError):
+            validate_maxDist(None)
+
+        with self.assertRaises(ValueError):
+            validate_maxDist('')
 
 
     def test_routes_search_algo_contracts(self):

@@ -21,10 +21,6 @@ def validate_latitude(latitude):
     if (latitude is None):
         raise TypeError("Request params (latitude) not found")
 
-    # if description params is empty
-    if not latitude: 
-        raise ValueError("latitude is empty")
-
     # if not float
     if not isinstance(latitude, float):
         raise TypeError("latitude is not float")
@@ -35,10 +31,6 @@ def validate_longtitude(longtitude):
     # if not found in params
     if (longtitude is None):
         raise TypeError("Request params (longtitude) not found")
-
-    # if description params is empty
-    if not longtitude: 
-        raise ValueError("longtitude is empty")
 
     # if not float
     if not isinstance(longtitude, float):
