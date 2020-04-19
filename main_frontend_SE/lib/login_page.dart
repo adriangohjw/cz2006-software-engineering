@@ -25,13 +25,6 @@ final Data data = Data(username: '', id: 0);
 bool loginfail = false;
 bool loading = false;
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  scopes: <String>[
-    'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
-  ],
-);
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -273,24 +266,7 @@ class _LoginPageState extends State<LoginPage> {
                                         },
                                       ),
                                     ),
-                                    Container(
-                                      height: 30,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Text(
-                                            "Forgot Password?",
-                                            style: TextStyle(
-                                                color: Colors.blue,
-                                                fontFamily: "Poppins-Medium",
-                                                fontSize:
-                                                    ScreenUtil.getInstance()
-                                                        .setSp(25)),
-                                          )
-                                        ],
-                                      ),
-                                    ),
+                                    
                                   ],
                                 ),
                               ),
@@ -381,85 +357,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 15,
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 50,
-                      //margin: EdgeInsets.only(top: 30),
-                      child: _signInButton(),
-                    ),
-                  ),
-                ),
+                
               ],
             ),
           );
   }
 
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Widget _signInButton() {
-    return OutlineButton(
-      splashColor: Colors.grey,
-      onPressed: () {
-        signInWithGoogle().whenComplete(() {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                return FirstScreen();
-              },
-            ),
-          );
-        });
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: Colors.grey),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image(image: AssetImage("assets/google_logo.png"), height: 35.0),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Sign in with Google',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
 }
-
-// Future<User> fetchPost(String uname) async {
-//   print('Done');
-//   final response =
-
-//       await http.get('http://localhost:3333/users/?username=${uname}');
-
-//   if (response.statusCode == 200) {
-//     // If the call to the server was successful (returns OK), parse the JSON.
-//     return User.fromJson(json.decode(response.body));
-//   } else {
-//     // If that call was not successful (response was unexpected), it throws an error.
-//     throw Exception('Failed to load post');
-//   }
-// }
 
 Future<bool> getid(String uname, String pcode, BuildContext context) async {
   //print('entered');

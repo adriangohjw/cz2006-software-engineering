@@ -7,13 +7,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-final username = TextEditingController();
-final password = TextEditingController();
-final name = TextEditingController();
-final age = TextEditingController();
-final height = TextEditingController();
-final weight = TextEditingController();
-
 class EditUser extends StatefulWidget {
   var details;
   var poproutes;
@@ -21,36 +14,65 @@ class EditUser extends StatefulWidget {
   //print(this.dataUser);
 
   //@override
-  _EditUserState createState() => _EditUserState(initusername: details, popRo: poproutes);
+  _EditUserState createState() =>
+      _EditUserState(initusername: details, popRo: poproutes);
 }
 
 class _EditUserState extends State<EditUser> {
+  var username = TextEditingController();
+  var password = TextEditingController();
+  var name = TextEditingController();
+  var age = TextEditingController();
+  var height = TextEditingController();
+  var weight = TextEditingController();
   Future<User> post;
   var initusername;
   var popRo;
   _EditUserState({@required this.initusername, @required this.popRo});
-  
+
   @override
   void initState() {
     super.initState();
     post = fetchPost(initusername[0]);
-    
   }
-  
+
   final _formKey = GlobalKey<FormState>();
+
+  String curusername;
+  String curname;
+  String curage;
+  String curheight;
+  String curweight;
 
   @override
   Widget build(BuildContext context) {
     username.text = initusername[0].toString();
-    name.text = initusername[1].toString();
-    age.text = initusername[2].toString();
-    height.text = initusername[3].toString();
-    weight.text = initusername[4].toString();
+    if (curname == null) {
+      name.text = initusername[1].toString();
+    } else {
+      name.text = curname;
+    }
 
+    if (curage == null) {
+      age.text = initusername[2].toString();
+    } else {
+      age.text = curage;
+    }
+
+    if (curheight == null) {
+      height.text = initusername[3].toString();
+    } else {
+      height.text = curheight;
+    }
+
+    if (curweight == null) {
+      weight.text = initusername[4].toString();
+    } else {
+      weight.text = curweight;
+    }
 
     //username.text = initusername.name;
-    
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -85,7 +107,14 @@ class _EditUserState extends State<EditUser> {
                       height: 60,
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
-                        controller: name,
+                        controller: new TextEditingController.fromValue(
+                          new TextEditingValue(
+                            text: name.text,
+                            selection: new TextSelection.collapsed(
+                              offset: name.text.length,
+                            ),
+                          ),
+                        ),
                         validator: (value) {
                           if (value == '') {
                             return 'Please enter your Name!';
@@ -96,13 +125,26 @@ class _EditUserState extends State<EditUser> {
                           color: Colors.white,
                         ),
                         decoration: InputDecoration(
-                          border: InputBorder.none,
-                          fillColor: Colors.lightBlueAccent,
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
                           labelText: 'Name',
                           labelStyle: TextStyle(
                             color: Colors.white70,
                           ),
                         ),
+                        onChanged: (value) {
+                          if (value == '') {
+                            curname = null;
+                            name.text = null;
+                          } else {
+                            curname = value;
+                            name.text = value;
+                            name.selection = TextSelection.collapsed(
+                                offset: name.text.length);
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -113,10 +155,18 @@ class _EditUserState extends State<EditUser> {
                       height: 60,
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
-                        controller: age,
+                        controller: new TextEditingController.fromValue(
+                          new TextEditingValue(
+                            text: age.text,
+                            selection: new TextSelection.collapsed(
+                              offset: age.text.length,
+                            ),
+                          ),
+                        ),
                         validator: (value) {
-                          if (value == '') {
-                            return 'Please enter your Age!';
+                          if (value == '' ||
+                              (int.tryParse(value) != null) == false) {
+                            return 'Please enter a valid age!';
                           }
                           return null;
                         },
@@ -124,13 +174,26 @@ class _EditUserState extends State<EditUser> {
                           color: Colors.white,
                         ),
                         decoration: InputDecoration(
-                          border: InputBorder.none,
-                          fillColor: Colors.lightBlueAccent,
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
                           labelText: 'Age',
                           labelStyle: TextStyle(
                             color: Colors.white70,
                           ),
                         ),
+                        onChanged: (value) {
+                          if (value == '') {
+                            curage = null;
+                            age.text = null;
+                          } else {
+                            curage = value;
+                            age.text = value;
+                            age.selection = TextSelection.collapsed(
+                                offset: age.text.length);
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -141,10 +204,18 @@ class _EditUserState extends State<EditUser> {
                       height: 60,
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
-                        controller: height,
+                        controller: new TextEditingController.fromValue(
+                          new TextEditingValue(
+                            text: height.text,
+                            selection: new TextSelection.collapsed(
+                              offset: height.text.length,
+                            ),
+                          ),
+                        ),
                         validator: (value) {
-                          if (value == '') {
-                            return 'Please enter your height!';
+                          if (value == '' ||
+                              (double.tryParse(value) != null) == false) {
+                            return 'Please enter a valid Height!';
                           }
                           return null;
                         },
@@ -152,13 +223,26 @@ class _EditUserState extends State<EditUser> {
                           color: Colors.white,
                         ),
                         decoration: InputDecoration(
-                          border: InputBorder.none,
-                          fillColor: Colors.lightBlueAccent,
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
                           labelText: 'Height',
                           labelStyle: TextStyle(
                             color: Colors.white70,
                           ),
                         ),
+                        onChanged: (value) {
+                          if (value == '') {
+                            curheight = null;
+                            height.text = null;
+                          } else {
+                            curheight = value;
+                            height.text = value;
+                            height.selection = TextSelection.collapsed(
+                                offset: height.text.length);
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -170,23 +254,44 @@ class _EditUserState extends State<EditUser> {
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
                         validator: (value) {
-                          if (value == '') {
-                            return 'Please enter your weight!';
+                          if (value == '' ||
+                              (double.tryParse(value) != null) == false) {
+                            return 'Please enter a valid weight!';
                           }
                           return null;
                         },
-                        controller: weight,
+                        controller: new TextEditingController.fromValue(
+                          new TextEditingValue(
+                            text: weight.text,
+                            selection: new TextSelection.collapsed(
+                              offset: weight.text.length,
+                            ),
+                          ),
+                        ),
                         style: TextStyle(
                           color: Colors.white,
                         ),
                         decoration: InputDecoration(
-                          border: InputBorder.none,
-                          fillColor: Colors.lightBlueAccent,
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
                           labelText: 'Weight',
                           labelStyle: TextStyle(
                             color: Colors.white70,
                           ),
                         ),
+                        onChanged: (value) {
+                          if (value == '') {
+                            curweight = null;
+                            weight.text = null;
+                          } else {
+                            curweight = value;
+                            weight.text = value;
+                            weight.selection = TextSelection.collapsed(
+                                offset: weight.text.length);
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -214,8 +319,9 @@ class _EditUserState extends State<EditUser> {
                         RaisedButton(
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
-                              await fetchPut(username.text, age.text, height.text, weight.text, name.text);
-                              List l = await getDet();
+                              await fetchPut(username.text, age.text,
+                                  height.text, weight.text, name.text);
+                              List l = await getDet(username.text);
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) => MyHomePage(
@@ -251,7 +357,8 @@ class _EditUserState extends State<EditUser> {
 }
 // connecting to back end
 
-Future fetchPut(String uname, String agee, String ht, String wt, String nm) async {
+Future fetchPut(
+    String uname, String agee, String ht, String wt, String nm) async {
   final response = await http.put(
       'http://localhost:3333/users/?username=${uname}&age=${agee}&height=${ht}&weight=${wt}&name=${nm}');
 
@@ -282,12 +389,12 @@ Future<User> fetchPost(String usrname) async {
   }
 }
 
-Future<List> getDet() async {
+Future<List> getDet(String uname) async {
   var personDet = [];
   var userID;
   var l = [];
   var response1 =
-      await http.get('http://localhost:3333/users/?username=' + username.text);
+      await http.get('http://localhost:3333/users/?username=${uname}');
   if (response1.statusCode == 200) {
     personDet.add((await json.decode(response1.body))['username']);
     personDet.add((await json.decode(response1.body))['name']);

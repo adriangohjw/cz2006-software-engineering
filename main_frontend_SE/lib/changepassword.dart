@@ -12,27 +12,32 @@ final oldpassword = TextEditingController();
 bool passwrong = false;
 
 class EditPassword extends StatefulWidget {
-  @override
-  final DataUser dataUser;
+  //@override
+  var dataUser;
   var pop;
   EditPassword({@required this.dataUser, @required this.pop});
 
-  @override
-  _EditPasswordState createState() => _EditPasswordState(pops: pop);
+  //@override
+  _EditPasswordState createState() => _EditPasswordState(initdeets: dataUser, pops: pop);
 }
 
 class _EditPasswordState extends State<EditPassword> {
   Future<User> post;
+  var username = TextEditingController();
+  var initdeets;
   var pops;
-  _EditPasswordState({@required this.pops});
+  _EditPasswordState({@required this.initdeets, @required this.pops});
   @override
   void initState() {
     super.initState();
-    post = fetchPost();
+    post = fetchPost(initdeets[0].toString());
   }
+
 
   @override
   Widget build(BuildContext context) {
+    
+    username.text = initdeets[0].toString();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -59,27 +64,6 @@ class _EditPasswordState extends State<EditPassword> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 40, left: 50, right: 50),
-                  child: Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: TextField(
-                      controller: username,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        fillColor: Colors.lightBlueAccent,
-                        labelText: 'Username',
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
                   padding: const EdgeInsets.only(top: 10, left: 50, right: 50),
                   child: Container(
                     height: 60,
@@ -91,8 +75,10 @@ class _EditPasswordState extends State<EditPassword> {
                         color: Colors.white,
                       ),
                       decoration: InputDecoration(
-                        border: InputBorder.none,
-                        fillColor: Colors.lightBlueAccent,
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)),
+                        fillColor: Colors.white,
                         labelText: 'Old Password',
                         errorText: passwrong ? 'Old Password Incorrect' : null,
                         labelStyle: TextStyle(
@@ -114,8 +100,10 @@ class _EditPasswordState extends State<EditPassword> {
                         color: Colors.white,
                       ),
                       decoration: InputDecoration(
-                        border: InputBorder.none,
-                        fillColor: Colors.lightBlueAccent,
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)),
+                        fillColor: Colors.white,
                         labelText: 'New Password',
                         labelStyle: TextStyle(
                           color: Colors.white70,
@@ -146,9 +134,9 @@ class _EditPasswordState extends State<EditPassword> {
                       ),
                       RaisedButton(
                         onPressed: () async {
-                          bool checks = await fetchPutPassword();
+                          bool checks = await fetchPutPassword(username.text);
                           if (checks) {
-                            List l = await getDet();
+                            List l = await getDet(username.text);
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (context) => MyHomePage(
@@ -185,12 +173,12 @@ class _EditPasswordState extends State<EditPassword> {
 }
 
 // connecting to back end
-Future<List> getDet() async {
+Future<List> getDet(String uname) async {
   var personDet = [];
   var userID;
   var l = [];
   var response1 =
-      await http.get('http://localhost:3333/users/?username=' + username.text);
+      await http.get('http://localhost:3333/users/?username=${uname}');
   if (response1.statusCode == 200) {
     personDet.add((await json.decode(response1.body))['username']);
     personDet.add((await json.decode(response1.body))['name']);
@@ -209,9 +197,9 @@ Future<List> getDet() async {
   // return l;
 }
 
-Future<bool> fetchPutPassword() async {
+Future<bool> fetchPutPassword(String uname) async {
   final response = await http.put(
-      'http://localhost:3333/users/password/?username=${username.text}&current_password=${oldpassword.text}&new_password=${newpassword.text}');
+      'http://localhost:3333/users/password/?username=${uname}&current_password=${oldpassword.text}&new_password=${newpassword.text}');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful (returns OK), parse the JSON.
@@ -224,9 +212,9 @@ Future<bool> fetchPutPassword() async {
   }
 }
 
-Future<User> fetchPost() async {
+Future<User> fetchPost(String uname) async {
   final response =
-      await http.get('http://127.0.0.1:5000/users/?username=${username.text}');
+      await http.get('http://localhost:3333/users/?username=${uname}');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful (returns OK), parse the JSON.

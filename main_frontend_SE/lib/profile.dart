@@ -19,7 +19,19 @@ class DataUser {
 
 final dataUser = DataUser(
     username: username, name: name, age: age, height: height, weight: weight);
+class DailyDist {
+  final String date;
+  final int dist;
 
+  DailyDist({@required this.date, @required this.dist});
+}
+
+class DailyCal {
+  final String date;
+  final int cal;
+
+  DailyCal({@required this.date, @required this.cal});
+}
 class ProfilePage extends StatefulWidget {
   int id;
   var PersDet;
@@ -35,7 +47,7 @@ var name;
 var age;
 var height;
 var weight;
-
+var stats=[];
 class _ProfilePageState extends State<ProfilePage> {
   int userid;
   var details;
@@ -108,11 +120,6 @@ class _ProfilePageState extends State<ProfilePage> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
                 RaisedButton(
                   onPressed: () async {
-                    dataUser.username = await username;
-                    dataUser.name = await name;
-                    dataUser.age = await age;
-                    dataUser.height = await height;
-                    dataUser.weight = await weight;
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => EditUser(
@@ -135,11 +142,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 RaisedButton(
                   onPressed: () async {
-                    dataUser.username = await username;
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => EditPassword(
-                                dataUser: dataUser,
+                                dataUser: details,
                                 pop: popR,
                               )),
                     );
@@ -209,9 +215,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: <Widget>[
                   RaisedButton(
                     // Statistics
-                    onPressed: () {
+                    onPressed: () async{
+                      await getStats();
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => NetStats()),
+                        MaterialPageRoute(builder: (context) => NetStats(Dist: stats[0], Cal: stats[1],)),
                       );
                     },
                     color: Colors.white,
@@ -407,6 +414,29 @@ class _ProfilePageState extends State<ProfilePage> {
       weight = await (json.decode(response1.body))['weight'];
     } else {
       throw Exception('Failed to load routes');
+    }
+  }
+
+  getStats() async{
+    stats=[];
+    var response2 = await http.get('http://localhost:3333/stats/daily_calories/?user_id=' + userid.toString());
+    if (response2.statusCode == 200) {
+      var statist = await (json.decode(response2.body));
+      print(statist);
+      List<DailyCal> cal=[];
+      List<DailyDist> dist=[];
+      final s = statist as Map;
+      print(s);
+      print(s.keys);
+      for (final name in s.keys){
+        cal.add(DailyCal(date: name, cal: s[name]["total_calories"]));
+        dist.add(DailyDist(date: name, dist: s[name]["total_distance"]));
+      }
+      
+       stats.add(dist);
+       stats.add(cal);
+    } else {
+      throw Exception('Failed to load stats');
     }
   }
 }

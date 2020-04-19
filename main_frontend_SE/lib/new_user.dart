@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'Widgets/singup.dart';
 import 'Widgets/textNew.dart';
 import 'login_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final username = TextEditingController();
 final password = TextEditingController();
@@ -20,6 +21,7 @@ class NewUser extends StatefulWidget {
 }
 
 class _NewUserState extends State<NewUser> {
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,216 +32,272 @@ class _NewUserState extends State<NewUser> {
               end: Alignment.bottomLeft,
               colors: [Colors.black, Colors.black]),
         ),
-        child: ListView(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SingUp(),
-                    TextNew(),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 50, left: 50, right: 50),
-                  child: Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: TextField(
-                      controller: name,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        fillColor: Colors.lightBlueAccent,
-                        labelText: 'Name',
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      SingUp(),
+                      TextNew(),
+                    ],
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 50, left: 50, right: 50),
+                    child: Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      child: TextFormField(
+                        controller: name,
+                        validator: (value) {
+                          if (value == '') {
+                            return 'Please enter a valid Name';
+                          }
+                          return null;
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
+                          labelText: 'Name',
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
-                  child: Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: TextField(
-                      controller: username,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        fillColor: Colors.lightBlueAccent,
-                        labelText: 'Username',
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 50, right: 50),
+                    child: Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      child: TextFormField(
+                        controller: username,
+                        validator: (value) {
+                          if (value == '') {
+                            return 'Please enter a valid Username!';
+                          }
+                          return null;
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
+                          labelText: 'Username',
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
-                  child: Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: TextField(
-                      controller: password,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: 'Password',
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 50, right: 50),
+                    child: Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      child: TextFormField(
+                        controller: password,
+                        validator: (value) {
+                          if (value == '') {
+                            return 'Please enter a valid password!';
+                          }
+                          return null;
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
-                  child: Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: TextField(
-                      controller: age,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: 'Age',
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 50, right: 50),
+                    child: Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      child: TextFormField(
+                        controller: age,
+                        validator: (value) {
+                          if (value == '' ||
+                              (int.tryParse(value) != null) == false) {
+                            return 'Please enter a valid age!';
+                          }
+                          return null;
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
+                          labelText: 'Age',
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
-                  child: Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: TextField(
-                      controller: height,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: 'Height',
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 50, right: 50),
+                    child: Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      child: TextFormField(
+                        controller: height,
+                        validator: (value) {
+                          if (value == '' ||
+                              (double.tryParse(value) != null) == false) {
+                            return 'Please enter a valid Height!';
+                          }
+                          return null;
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
+                          labelText: 'Height (cm)',
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
-                  child: Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: TextField(
-                      controller: weight,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: 'Weight',
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 50, right: 50),
+                    child: Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      child: TextFormField(
+                        controller: weight,
+                        validator: (value) {
+                          if (value == '' ||
+                              (double.tryParse(value) != null) == false) {
+                            return 'Please enter a valid weight!';
+                          }
+                          return null;
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          fillColor: Colors.white,
+                          labelText: 'Weight (Kg)',
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 0, right: 0, left: 250),
-                  child: Container(
-                    alignment: Alignment.bottomRight,
-                    height: 50,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30)),
-                    child: FlatButton(
-                      onPressed: () {
-                        fetchPost();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                       // fetchPutCreateUser();
-                      },
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0, right: 0, left: 250),
+                    child: Container(
+                      alignment: Alignment.bottomRight,
+                      height: 50,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: FlatButton(
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            fetchPost(context);
+                          }
+                          // fetchPutCreateUser();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'OK',
+                              style: TextStyle(
+                                color: Colors.lightBlueAccent,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward,
+                              color: Colors.lightBlueAccent,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0, left: 30),
+                    child: Container(
+                      alignment: Alignment.topRight,
+                      //color: Colors.red,
+                      height: 20,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'OK',
+                            'Have we met before?',
                             style: TextStyle(
-                              color: Colors.lightBlueAccent,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                              color: Colors.white70,
                             ),
                           ),
-                          Icon(
-                            Icons.arrow_forward,
-                            color: Colors.lightBlueAccent,
+                          FlatButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()));
+                            },
+                            child: Text(
+                              'Sign in',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 0, left: 30),
-                  child: Container(
-                    alignment: Alignment.topRight,
-                    //color: Colors.red,
-                    height: 20,
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Have we met before?',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        FlatButton(
-                          padding: EdgeInsets.all(0),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
-                          },
-                          child: Text(
-                            'Sign in',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -260,27 +318,81 @@ class _NewUserState extends State<NewUser> {
 //   }
 // }
 
-Future<User> fetchPost() async {
-  final response = await http.post(
-      'http://localhost:3333/users/?password=${password.text}&name=${name.text}&username=${username.text}');
+Future<bool> fetchPost(BuildContext context) async {
+  final checkres =
+      await http.get('http://localhost:3333/users/?username=${username.text}');
 
-  if (response.statusCode == 200) {
-    // If the call to the server was successful (returns OK), parse the JSON.
-    // return User.fromJson(json.decode(response.body));
+  if (checkres.statusCode == 200) {
+    //username exists
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Creation Unsuccessful', style: GoogleFonts.lora()),
+          content: Text(
+              'The username @' +
+                  username.text +
+                  ' already exists. Please retry!',
+              style: GoogleFonts.lora()),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK!'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return false;
   } else {
-    // If that call was not successful (response was unexpected), it throw an error.
-    throw Exception('Failed to load post');
-  }
+    final response = await http.post(
+        'http://localhost:3333/users/?password=${password.text}&name=${name.text}&username=${username.text}');
 
-  final response2 = await http.put(
-      'http://localhost:3333/users/?username=${username.text}&age=${age.text}&height=${height.text}&weight=${weight.text}&name=${name.text}');
+    if (response.statusCode == 200) {
+      // If the call to the server was successful (returns OK), parse the JSON.
+      // return User.fromJson(json.decode(response.body));
 
-  if (response2.statusCode == 200) {
-    // If the call to the server was successful (returns OK), parse the JSON.
-    return User.fromJson(json.decode(response2.body));
-  } else {
-    // If that call was not successful (response was unexpected), it throw an error.
-    throw Exception('Failed to load put');
+      final response2 = await http.put(
+          'http://localhost:3333/users/?username=${username.text}&age=${age.text}&height=${height.text}&weight=${weight.text}&name=${name.text}');
+
+      if (response2.statusCode == 200) {
+        // If the call to the server was successful (returns OK), parse the JSON.
+
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Creation Successful!', style: GoogleFonts.lora()),
+              content: Text(
+                  'New User has been created! your username is @' +
+                      username.text +
+                      ' .',
+                  style: GoogleFonts.lora()),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('OK!'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        return true;
+      } else {
+        // If that call was not successful (response was unexpected), it throw an error.
+        throw Exception('Failed to load put');
+      }
+    } else {
+      // If that call was not successful (response was unexpected), it throw an error.
+      throw Exception('Failed to load post');
+    } //here
   }
 }
 

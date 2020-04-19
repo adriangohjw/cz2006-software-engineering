@@ -54,7 +54,7 @@ class MapPageState extends State<LiveNav> {
   String display_distance='0.0';
   double distance=0;
   String displaydistance='0.0',displaycal='0';
-  double ascent,descent,flat;
+  double ascent=0.00,descent=0.00,flat=0.00;
   String displayascent='0.0',displaydescent='0.0',displayflat='0.0';
   BitmapDescriptor currentlocationicon ;
   var swatch=new Stopwatch();
@@ -166,7 +166,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "Dist Travelled: "+" "+"$displaydistance km", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "Travelled"+" "+"$displaydistance km", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -185,7 +185,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "Dist Remaining: "+" "+"$display_distance km", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "Remaining"+" "+"$display_distance km", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -229,7 +229,7 @@ class MapPageState extends State<LiveNav> {
                         ),
                       ),
                       child: Text(
-                        "Calories: "+"$displaycal kCal", // this is a random value. original value must be extracted from database / route detail and replaced here
+                        "Calorie:"+"$displaycal kCal", // this is a random value. original value must be extracted from database / route detail and replaced here
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
@@ -407,7 +407,7 @@ class MapPageState extends State<LiveNav> {
                   ],
                 ),
                 Spacer(
-                  flex: 8,
+                  flex:5
                 ),
                 Row(
                   children: <Widget>[
@@ -470,7 +470,7 @@ class MapPageState extends State<LiveNav> {
                     Spacer(),
                   ],
                 ),
-                Spacer(flex: 2,),
+                Spacer(flex:6),
                 Container(
                   height: 50,
                 ),
@@ -664,9 +664,13 @@ void _currentLocation() async {
         displaydistance=distance.toStringAsFixed(2);
         distance1=double.parse(routeDet[1])-distance;
         display_distance=distance1.toStringAsFixed(2).toString();
-
+        
         calorieCalculator(speed, distance);
         getdetails(routeDet[8], distance);
+        if(distance1<=0){
+          ispressed=1;
+          _showTravelSummary(); 
+        }
 
 
         speedList.add(speed);
@@ -726,29 +730,41 @@ void _currentLocation() async {
       
 }
 void getdetails(List a,double distance){
+  print(a);
   int length=a.length;
   int b;
   for(int i=0;i<length;i++)
   {
-     if(distance>a[i][0]&&(distance<a[i+1][0])){
-            b=i+1;
+     if(distance>=a[i][0]&&(distance<a[i+1][0])){
+            b=i;
             setState(() {
-            ascent=ascent+a[b][1];
-            descent=descent+a[b][2];
+            ascent=a[b][1];
+            descent=a[b][2];
             flat=distance-(ascent+descent);
-            displayascent=ascent.toStringAsFixed(2).toString();
-            displaydescent=descent.toStringAsFixed(2).toString();
-            displayflat=flat.toStringAsFixed(2).toString();
+            displayascent=ascent.toStringAsFixed(2);
+            displaydescent=descent.toStringAsFixed(2);
+            displayflat=flat.toStringAsFixed(2);
             });
             break;}
-        else{
+     else if(distance==a[i+1][0]){
+            b=i+1;  
             setState(() {
-            ascent=0;
-            descent=0;
+              ascent=a[b][1];
+              descent=a[b][2];
+              flat=distance-(ascent+descent);
+              displayascent=ascent.toStringAsFixed(2);
+              displaydescent=descent.toStringAsFixed(2);
+              displayflat=flat.toStringAsFixed(2);
+         });
+            break;}
+        else if(distance<a[i][0]){
+            setState(() {
+            ascent=ascent+0;
+            descent=descent+0;
             flat=distance;
-            displayascent=ascent.toStringAsFixed(2).toString();
+            displayascent=ascent.toStringAsFixed(2);
             displaydescent=descent.toStringAsFixed(2).toString();
-            displayflat=flat.toStringAsFixed(2).toString();
+            displayflat=flat.toStringAsFixed(2);
             });
             break;
         }
