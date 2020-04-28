@@ -61,13 +61,6 @@ If you face error, delete the folder "migrations" and try the above steps again.
 - WARNING: It will wipe the entire local test DB clean, before populating it with mock data
 - To populate in local actual DB, replace `from run_test import create_app` with `from run import create_app`, save the file and execute the same command
 
-## Testing API endpoints
-
-Postman is a Collaboration Platform for API Development
-
-1. Download and install Postman from [this link](https://www.postman.com/downloads/)
-2. Go to Postman and [join the team](https://app.getpostman.com/join-team?invite_code=bd6c25557a885c34cf660dff1156c0a8&ws=3f9319a1-921e-4a92-af38-cc946d30ee25)
-
 ## To run unit testing
 `python tests.py`
 
